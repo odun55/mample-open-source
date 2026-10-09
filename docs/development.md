@@ -1,5 +1,12 @@
 # Development setup
 
+Clone the public source before following the component setup below:
+
+```bash
+git clone https://github.com/odun55/mample-open-source.git
+cd mample-open-source
+```
+
 ## Requirements
 
 Use Node.js 22 for local JavaScript tooling, npm, Flutter with the Dart SDK

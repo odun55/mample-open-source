@@ -26,8 +26,8 @@ Android uygulama + CLI + Firebase bildirim akışı. Terminal erişimi olan yapa
 - [x] Güvenli yayın yolu seçildi: `odun55/Mample` özel kalacak; `odun55/mample-open-source` temiz kaynaklarla yeni geçmişten başlayacak.
 - [x] Üretim/telefon günlükleri, eklenti ZIP'leri ve yerel Android Firebase yapılandırması kaynak dağıtımından çıkarıldı; yerel kopyalar korundu.
 - [x] Temiz kaynak kopyası ayrı secret scanner ile tarandı; eski Git geçmişi, uzak refs ve Actions kayıt/artefaktları yeni depoya aktarılmayacak.
-- [ ] Temiz kaynak ve belgeler GitHub'a gönderilip lisans görünümü doğrulanacak.
-- [ ] Yeni depo herkese açık yapılacak; anonim erişim doğrulanacak.
+- [x] Temiz kaynak ve belgeler GitHub'a gönderildi; MIT lisansı ve otomatik kaynak kontrolleri doğrulandı.
+- [x] [Yeni depo](https://github.com/odun55/mample-open-source) herkese açık yapıldı; anonim erişim doğrulandı. Eski depo özel kaldı.
 
 Eski özel depodaki anahtar/token kayıtlarının geçerliliği ayrı bir işletim kontrolüdür; bu kayıtlar yeni açık kaynak depoya taşınmaz.
 

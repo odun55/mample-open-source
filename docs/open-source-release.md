@@ -1,4 +1,22 @@
-# Open-source release preparation — October 9, 2026
+# Open-source release — October 9, 2026
+
+## Published repository
+
+[odun55/mample-open-source](https://github.com/odun55/mample-open-source) is public
+under the MIT license. GitHub API checks without authentication confirmed public
+access and MIT license recognition. The original `odun55/Mample` was independently
+verified private and its history was not rewritten or transferred.
+
+The clean initial source commit is
+`c9ddd4d39e4c4cfb4130f6011b4097b087afeb4c`, with no parent commits. The
+[initial GitHub Actions run](https://github.com/odun55/mample-open-source/actions/runs/37957491789)
+passed CLI tests, Firebase Functions tests and source hygiene checks. Gitleaks
+also scanned the new one-commit history without findings before publication.
+
+The local clean checkout lives at `public-release/source`. The original working
+folder retains its private `origin`; use the clean checkout or a fresh clone for
+public development. Do not push or merge the old private repository's history
+into the new repository.
 
 ## Prepared source
 
@@ -46,10 +64,11 @@ Untracking current files does not sanitize the original repository's history.
 - Website: production build passed; generated TR/EN home, guide and extension
   pages were checked for removed commands and inaccurate permission claims.
 - Physical-phone delivery, Play Integrity and release AAB checks remain separate.
-- Live website deployment and repository visibility change have not been done.
+- The new source repository is public. Live website deployment is a separate
+  pending release task; no Vercel project binding or old remote was changed.
 - A history-free 327-file source snapshot was prepared under the ignored
-  `public-release/source` folder. This is a local review artifact, not a public
-  repository. The snapshot contains the original source and license notices,
+  `public-release/source` folder, then initialized as the independent public
+  repository checkout. The snapshot contains original source and license notices,
   without tracked production logs, signing keys or distribution archives.
 - Gitleaks scanned this snapshot with the narrow translation-field exception
   and found no leaks. This does not prove that the existing private history or
