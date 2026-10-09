@@ -1,0 +1,10 @@
+.navbar { position: fixed; inset: 0 0 auto; z-index: 100; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 40px; background: rgba(18,18,20,.92); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,.08); }
+.brand { display: flex; align-items: center; gap: 12px; font-size: 22px; font-weight: 700; letter-spacing: -.5px; }
+.brand img { border-radius: 10px; }
+.links { display: flex; align-items: center; gap: 22px; font-size: 14px; font-weight: 500; }
+.links a:hover, .links a[aria-current] { color: var(--primary); }
+.languages { display: flex; gap: 10px; padding-left: 18px; border-left: 1px solid rgba(255,255,255,.15); font-size: 12px; font-weight: 700; }
+.supportLink { padding: 8px 14px; border: 1px solid rgba(255,255,255,.18); border-radius: 7px; transition: border-color .2s, background-color .2s; }
+.supportLink:hover { border-color: var(--primary); background: rgba(136,212,158,.06); }
+.supportLink:focus-visible { outline: 2px solid var(--primary); outline-offset: 4px; }
+@media (max-width: 640px) { .navbar { padding: 14px 20px; flex-wrap: wrap; } .links { width: 100%; justify-content: space-between; gap: 10px; font-size: 12px; } .languages { padding-left: 10px; } .brand { font-size: 20px; } }

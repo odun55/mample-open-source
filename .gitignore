@@ -1,0 +1,61 @@
+# Ana Dizin Klasörleri
+.agents/
+.gradle_cache/
+.pub_cache/
+.android_sdk/
+
+# Node & JS Projeleri (website, cli, firebase/functions)
+node_modules/
+dist/
+build/
+.next/
+.env
+.env.*
+!.env.example
+npm-debug.log
+yarn-error.log
+yarn.lock
+package-lock.json
+
+# Flutter / Dart (mample_app)
+.dart_tool/
+.packages
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+*.iml
+.idea/
+.vscode/
+
+# Firebase
+.firebase/
+firebase-debug.log*
+
+# Mac/Windows Sistem Dosyaları
+.DS_Store
+Thumbs.db
+
+# Extension Builds and Secrets
+keys/
+*.crx
+*.zip
+*.pem
+scratch.txt
+yapilacaklar.md
+
+# Local credentials, production configuration and diagnostic captures
+.codex/
+.aws/
+*.jks
+*.keystore
+key.properties
+*service-account*.json
+*service_account*.json
+google-services.json
+.firebaserc
+**/logcat*.txt
+**/deploy.log
+**/debug*.log
+.mample/
+assets/marketing/captures/
+public-release/

@@ -1,0 +1,85 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ─────────────────────────────────────────────────────────────────
+    // USERS COLLECTION
+    // ─────────────────────────────────────────────────────────────────
+    // Users can edit only notification delivery and display preferences.
+    // Server moderation fields (including notifications_disabled) remain protected.
+    match /users/{uid} {
+      function editableFields() {
+        return ['fcm_token', 'cli_secret_key_hash', 'updated_at',
+                'default_message', 'show_connection_name'];
+      }
+
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow create: if request.auth != null
+                    && request.auth.uid == uid
+                    && request.resource.data.keys().hasOnly(editableFields());
+      allow update: if request.auth != null
+                    && request.auth.uid == uid
+                    && request.resource.data.diff(resource.data)
+                         .affectedKeys().hasOnly(editableFields());
+      allow delete: if false;
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    // CONNECTIONS COLLECTION
+    // ─────────────────────────────────────────────────────────────────
+    // connections/{connection_id}:
+    //   uid         → bağlantıyı oluşturan kullanıcının UID'si
+    //   created_at  → Timestamp
+    //   expires_at  → Timestamp (10 dakika sonra geçersiz)
+    //
+    // Akış:
+    //   1. Chrome Extension QR kodu gösterir (connection_id = UUID)
+    //   2. Flutter app QR okur → bu belgeyi yazar (uid ile)
+    //   3. Cloud Function triggerNotification bu belgeyi okur ve siler
+    // ─────────────────────────────────────────────────────────────────
+    match /connections/{connectionId} {
+      // Kimliği doğrulanmış kullanıcı kendi bağlantısını oluşturabilir
+      allow create: if request.auth != null
+                    && request.resource.data.uid == request.auth.uid
+                    && request.resource.data.keys().hasAll(['uid', 'created_at', 'expires_at'])
+                    // expires_at en fazla 24 saat ilerisi olabilir
+                    && request.resource.data.expires_at is timestamp
+                    && request.resource.data.expires_at.toMillis()
+                       <= (request.time.toMillis() + 24 * 60 * 60 * 1000);
+
+      // Kullanıcı kendi bağlantısını okuyabilir (pairing durumu için)
+      allow read: if request.auth != null && resource.data.uid == request.auth.uid;
+
+      // Kullanıcı kendi bağlantısını silebilir (iptal için)
+      allow delete: if request.auth != null && resource.data.uid == request.auth.uid;
+
+      // Kullanıcı kendi bağlantısını güncelleyebilir (isim değiştirme)
+      allow update: if request.auth != null 
+                    && resource.data.uid == request.auth.uid
+                    && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['platform']);
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    // RATE LIMITS COLLECTION
+    // ─────────────────────────────────────────────────────────────────
+    // rateLimits/{identifier}: → sliding window timestamp listesi
+    // Yalnızca Cloud Functions (admin SDK) erişebilir
+    // Client erişimi tamamen yasak
+    // ─────────────────────────────────────────────────────────────────
+    match /rateLimits/{id} {
+      allow read, write: if false;
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    // Diğer tüm belgeler varsayılan olarak reddedilir
+    // ─────────────────────────────────────────────────────────────────
+    match /pending_notifications/{id} {
+      allow read, write: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

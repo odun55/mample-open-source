@@ -1,0 +1,14 @@
+title = "Mample source checks"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "generic-api-key"
+
+  [[rules.allowlists]]
+  description = "The privacy_3_desc translation field name is prose metadata, not a credential."
+  condition = "AND"
+  regexTarget = "secret"
+  regexes = ['''^privacy_3_desc$''']
+  paths = ['''(^|/)website/dictionaries/(en|tr)\.json$''']

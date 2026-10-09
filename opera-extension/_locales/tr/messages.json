@@ -1,0 +1,181 @@
+{
+  "extName": {
+    "message": "Mample: Task Notifier"
+  },
+  "extDesc": {
+    "message": "Web'deki ve bilgisayarınızdaki uzun işlemler bittiğinde anında telefonunuza bildirim alın. Hesap açmak veya kayıt olmak yok!"
+  },
+  "tooltip_text": {
+    "message": "Mobil uygulamadan QR kodu okutarak veya CLI terminal kodunu girerek cihazınızı eşleştirin.<br><br>Web sitesinde <strong style=\"color: #FFC107;\">/mample</strong> yazarak veya eklentiden <strong style=\"color: #FFC107;\">Tuş Seç</strong> diyerek, takip etmek istediğiniz butonu öğretebilirsiniz. Öğrettikten sonra ilgili işlemi yapıp <strong style=\"color: #FFC107;\">/mample</strong> yazdığınızda, Mample arka planda butonu izler ve işlem bitip buton kaybolduğunda size bildirim gönderir.<br><br>Eğer eklentideki <strong style=\"color: #FFC107;\">Seçili Tuştan Bildirim Al</strong> tikini (otonom mod) işaretlerseniz, her seferinde /mample yazmanıza gerek kalmaz; buton her kaybolduğunda otomatik olarak bildirim alırsınız.<br><br>Eğittiğiniz siteleri görmek ve silmek için <strong style=\"color: #FFC107;\">☰</strong> menüsünü kullanabilirsiniz.<br><br>Detaylı bilgi için: <a href=\"https://mample.vercel.app\" target=\"_blank\" style=\"color: #FFC107; text-decoration: underline;\">mample.vercel.app</a>"
+  },
+  "connecting": {
+    "message": "Bağlantı Yok"
+  },
+  "disconnect": {
+    "message": "Bağlantıyı Kes"
+  },
+  "qr_instruction": {
+    "message": "Mobil uygulamadan QR kodu okutarak veya CLI terminal kodunu girerek cihazı eşleştirin."
+  },
+  "connect": {
+    "message": "Bağlan"
+  },
+  "downloads_notif_prefix": {
+    "message": "İndirmelerden Bildirim Al"
+  },
+  "downloads_notif_suffix": {
+    "message": "MB)"
+  },
+  "use_custom_key": {
+    "message": "Seçili Tuştan Bildirim Al"
+  },
+  "cancel_custom_key": {
+    "message": "Otomatik Bildirimi Kapat"
+  },
+  "waiting_process": {
+    "message": "Bildirim için işlemin bitmesi bekleniyor..."
+  },
+  "process_success": {
+    "message": "Bildirim başarıyla gönderildi!"
+  },
+  "process_error": {
+    "message": "Bildirim gönderilemedi!"
+  },
+  "select_key": {
+    "message": "Tuş Seç"
+  },
+  "delete_key": {
+    "message": "Tuşu Sil"
+  },
+  "toast_no_custom_key": {
+    "message": "Seçili tuş yok, önce tuş seçimi yapınız."
+  },
+  "start_system_listen": {
+    "message": "Sistem Tuşunu Kullan"
+  },
+  "cancel_system_listen": {
+    "message": "Sistem Tuşu Kullanılıyor / İptal"
+  },
+  "back": {
+    "message": "Geri"
+  },
+  "site_list_title": {
+    "message": "Site Listesi"
+  },
+  "system_sites": {
+    "message": "Sistemde Tuş Belirlenmiş Siteler"
+  },
+  "custom_sites": {
+    "message": "Eğitilmiş Özel Siteler"
+  },
+  "connected": {
+    "message": "Bağlı"
+  },
+  "disconnected": {
+    "message": "Koptu"
+  },
+  "tooltip_toggle_ext": {
+    "message": "Eklentiyi Aç/Kapat"
+  },
+  "toggle_lang": {
+    "message": "🇬🇧 EN"
+  },
+  "ready_instruction": {
+    "message": "Mample kullanıma hazır! Herhangi bir web sitesinde /mample yazarak tetikleyici oluşturabilirsiniz."
+  },
+  "confirm_disconnect": {
+    "message": "Bağlantıyı kesmek istediğinize emin misiniz?"
+  },
+  "toast_active_system": {
+    "message": "Mample aktif! Sistemdeki tuşu dinliyorum, işlem bitince haber vereceğim."
+  },
+  "toast_active_selector": {
+    "message": "Mample aktif! İşlem bitince haber vereceğim."
+  },
+  "toast_teach_start": {
+    "message": "Mample: Elementi seçin (İptal için Sağ Tık)"
+  },
+  "toast_teach_cancel": {
+    "message": "Mample: Seçim iptal edildi."
+  },
+  "toast_selector_saved": {
+    "message": "Mample: Tuş seçimi kaydedildi. (Seçtiğiniz bölüm kaybolduğunda bildirim alacaksınız.)"
+  },
+  "toast_system_saved": {
+    "message": "Mample: Tuş izleme kaydedildi. (İşlem bittiğinde bildirim alacaksınız.)"
+  },
+  "toast_target_removed": {
+    "message": "Mample: Hedef kayboldu! Telefonunuza bildirim gönderiliyor..."
+  },
+  "toast_learned": {
+    "message": "Mample öğrendi ve aktif edildi! Tuş kaybolduğunda bildirim gidecek."
+  },
+  "toast_key_not_found": {
+    "message": "Mample: Tuş bulunamadı, lütfen ekranda işlem yapılırken var olan sonradan kaybolan bir tuş seçimi yapınız."
+  },
+  "toast_process_done": {
+    "message": "Mample: İşlem bitti, bildirim gönderildi!"
+  },
+  "toast_process_started": {
+    "message": "Mample: İşlem başladı. Bittiğinde bildirim alacaksınız."
+  },
+  "toast_error": {
+    "message": "Mample Hata: "
+  },
+  "no_custom_sites": {
+    "message": "Henüz tuş seçimi yapılan özel bir site yok."
+  },
+  "delete_btn": {
+    "message": "Sil"
+  },
+  "confirm_delete": {
+    "message": "$1 sitesi için eğitilen tuşu silmek istediğinize emin misiniz?",
+    "placeholders": {
+      "host": {
+        "content": "$1"
+      }
+    }
+  },
+  "toast_extension_disabled": {
+    "message": "Mample: Eklenti kapalı, lütfen menüden açın."
+  },
+  "toast_tracking_started": {
+    "message": "Mample: İzleme başlatıldı. Bittiğinde bildirim alacaksınız."
+  },
+  "toast_selection_cleared": {
+    "message": "Mample: Seçim sıfırlandı ve izleyici durduruldu."
+  },
+  "toast_system_done": {
+    "message": "Sistem bitti: "
+  },
+  "toast_sw_system_done": {
+    "message": "SW Sistem bitti: "
+  },
+  "toast_learned_clipboard": {
+    "message": "Mample öğrendi! Özel kod panoya kopyalandı (Bana yapıştırabilirsiniz)."
+  },
+  "toast_no_system_support": {
+    "message": "Bu sitede henüz Sistem tuşu desteği yok. Lütfen /mample kullanarak tuş seçimi yapın."
+  },
+  "ERROR_NOT_CONNECTED": {
+    "message": "Mample hesabına bağlanmamışsınız. Lütfen eklenti ikonuna tıklayıp QR kodu okutun."
+  },
+  "ERROR_EXTENSION_DISABLED": {
+    "message": "Mample eklentisi kapalı olduğu için bildirim gönderilmedi."
+  },
+  "ERROR_CONNECTION_LOST": {
+    "message": "Bağlantı telefondan koparılmış! Lütfen eklenti menüsünden yeniden QR okutun."
+  },
+  "popup_title": {
+    "message": "Mample Bildirimi"
+  },
+  "popup_message": {
+    "message": "Seçili tuş algılandı (İşlem başladı).<br>Bildirim almak ister misiniz?"
+  },
+  "popup_yes": {
+    "message": "Evet"
+  },
+  "popup_no": {
+    "message": "Hayır"
+  }
+}

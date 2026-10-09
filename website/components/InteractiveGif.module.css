@@ -1,0 +1,31 @@
+.wrapper { display: flex; align-items: center; gap: 40px; margin-top: 40px; width: 100%; }
+.gifWrapper { flex: 1.2; min-width: 0; width: 100%; display: flex; flex-direction: column; align-items: center; }
+.container { width: 100%; max-width: 750px; height: 420px; }
+.gifWindow { position: relative; width: 100%; height: 100%; overflow: hidden; border-radius: 12px; border: 1px solid rgba(255,255,255,.1); background: #1a1a1c; box-shadow: 0 20px 40px rgba(0,0,0,.45); }
+.mediaLayer { position: absolute; inset: 0; opacity: 0; pointer-events: none; transition: opacity 180ms ease; }
+.activeMedia { opacity: 1; z-index: 1; }
+.media { display: block; width: 100%; height: 100%; object-fit: cover; }
+.placeholderText { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; padding: 24px; color: #88d49e; font-size: 1.5rem; font-weight: 600; text-align: center; }
+.placeholderText small { color: #a1a1aa; font-size: .9rem; font-weight: 400; }
+.textContainer { flex: .8; min-width: 0; display: flex; flex-direction: column; gap: 16px; text-align: left; }
+.textContent { position: relative; overflow: hidden; width: 100%; padding: 16px 20px; border-radius: 12px; border: 1px solid transparent; cursor: pointer; transition: background-color .2s, border-color .2s; }
+.textContent:hover { background: rgba(255,255,255,.03); }
+.textContent:focus-visible, .dot:focus-visible { outline: 2px solid #88d49e; outline-offset: 4px; }
+.activeText { background: rgba(136,212,158,.08); border-color: rgba(136,212,158,.2); }
+.textContent h3 { color: #fff; font-size: 1.5rem; margin-bottom: 8px; }
+.activeText h3 { color: #88d49e; }
+.textContent p { color: #a1a1aa; font-size: .95rem; line-height: 1.5; }
+.activeText p { color: #d4d4d8; }
+.progressBar { position: absolute; bottom: 0; left: 0; height: 3px; background: #88d49e; }
+.dots { display: flex; gap: 12px; margin-top: 24px; }
+.dot { width: 10px; height: 10px; border-radius: 50%; border: none; padding: 0; background: rgba(255,255,255,.2); cursor: pointer; transition: background-color .2s, transform .2s; }
+.dot:hover { background: rgba(255,255,255,.5); }
+.activeDot { background: #88d49e; transform: scale(1.3); }
+@media (max-width: 900px) {
+ .wrapper { flex-direction: column; gap: 32px; }
+ .textContainer { width: 100%; gap: 8px; }
+ .textContent:not(.activeText) p { display: none; }
+ .gifWrapper { flex: auto; }
+ .container { height: 300px; }
+}
+@media (prefers-reduced-motion: reduce) { .mediaLayer { transition: none; } }

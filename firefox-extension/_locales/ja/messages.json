@@ -1,0 +1,8 @@
+{
+  "extName": {
+    "message": "Mample: Task Notifier"
+  },
+  "extDesc": {
+    "message": "長時間のWebタスク、AI生成、ターミナルスクリプトが終了したら、スマホに即座にプッシュ通知を受け取れます。アカウント登録は不要です！"
+  }
+}

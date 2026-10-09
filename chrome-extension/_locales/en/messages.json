@@ -1,0 +1,181 @@
+{
+  "extName": {
+    "message": "Mample: Task Notifier"
+  },
+  "extDesc": {
+    "message": "Get instant push notifications when your long web tasks, AI generations, and terminal scripts finish. No account required!"
+  },
+  "tooltip_text": {
+    "message": "Pair your device by scanning the QR code from the mobile app or entering the CLI terminal code.<br><br>You can teach Mample which button to track by typing <strong style=\"color: #FFC107;\">/mample</strong> on any website or clicking <strong style=\"color: #FFC107;\">Select Key</strong> in the extension. Once trained, simply type <strong style=\"color: #FFC107;\">/mample</strong> after starting a process, and Mample will send you a notification when the button disappears.<br><br>If you check the <strong style=\"color: #FFC107;\">Get Notifications from Selected Key</strong> option (Auto Mode) in the extension, you don't need to type /mample every time; you'll receive an automatic notification whenever that button disappears.<br><br>You can manage and delete your trained sites using the <strong style=\"color: #FFC107;\">☰</strong> menu.<br><br>More info: <a href=\"https://mample.vercel.app\" target=\"_blank\" style=\"color: #FFC107; text-decoration: underline;\">mample.vercel.app</a>"
+  },
+  "connecting": {
+    "message": "Not Connected"
+  },
+  "disconnect": {
+    "message": "Disconnect"
+  },
+  "qr_instruction": {
+    "message": "Pair the device by scanning the QR code from the mobile app or entering the CLI terminal code."
+  },
+  "connect": {
+    "message": "Connect"
+  },
+  "downloads_notif_prefix": {
+    "message": "Get Notifications for Downloads"
+  },
+  "downloads_notif_suffix": {
+    "message": "MB)"
+  },
+  "use_custom_key": {
+    "message": "Get Notifications from Selected Key"
+  },
+  "cancel_custom_key": {
+    "message": "Turn Off Auto Notifications"
+  },
+  "waiting_process": {
+    "message": "Waiting for process to finish for notification..."
+  },
+  "process_success": {
+    "message": "Notification sent successfully!"
+  },
+  "process_error": {
+    "message": "Failed to send notification!"
+  },
+  "select_key": {
+    "message": "Select Key"
+  },
+  "delete_key": {
+    "message": "Delete Key"
+  },
+  "toast_no_custom_key": {
+    "message": "No key selected, please select a key first."
+  },
+  "start_system_listen": {
+    "message": "Use System Key"
+  },
+  "cancel_system_listen": {
+    "message": "System Key In Use / Cancel"
+  },
+  "back": {
+    "message": "Back"
+  },
+  "site_list_title": {
+    "message": "Site List"
+  },
+  "system_sites": {
+    "message": "System Pre-selected Sites"
+  },
+  "custom_sites": {
+    "message": "Custom Trained Sites"
+  },
+  "connected": {
+    "message": "Connected"
+  },
+  "disconnected": {
+    "message": "Disconnected"
+  },
+  "tooltip_toggle_ext": {
+    "message": "Toggle Extension"
+  },
+  "toggle_lang": {
+    "message": "🇹🇷 TR"
+  },
+  "ready_instruction": {
+    "message": "Mample is ready to use! You can create a trigger by typing /mample on any website."
+  },
+  "confirm_disconnect": {
+    "message": "Are you sure you want to disconnect?"
+  },
+  "toast_active_system": {
+    "message": "Mample active! Monitoring the system key, will notify when done."
+  },
+  "toast_active_selector": {
+    "message": "Mample active! Will notify when the process is done."
+  },
+  "toast_teach_start": {
+    "message": "Mample: Select an element (Right Click to Cancel)"
+  },
+  "toast_teach_cancel": {
+    "message": "Mample: Selection cancelled."
+  },
+  "toast_selector_saved": {
+    "message": "Mample: Key selection saved. (You will be notified when the selected part disappears.)"
+  },
+  "toast_system_saved": {
+    "message": "Mample: Key monitoring saved. (You will be notified when the process finishes.)"
+  },
+  "toast_target_removed": {
+    "message": "Mample: Target disappeared! Sending notification to your phone..."
+  },
+  "toast_learned": {
+    "message": "Mample learned and activated! You will be notified when the button disappears."
+  },
+  "toast_key_not_found": {
+    "message": "Mample: Key not found, please select a key that appears during the process and disappears afterwards."
+  },
+  "toast_process_done": {
+    "message": "Mample: Process done, notification sent!"
+  },
+  "toast_process_started": {
+    "message": "Mample: Process started. You will be notified when it's done."
+  },
+  "toast_error": {
+    "message": "Mample Error: "
+  },
+  "no_custom_sites": {
+    "message": "No custom site with a selected key yet."
+  },
+  "delete_btn": {
+    "message": "Delete"
+  },
+  "confirm_delete": {
+    "message": "Are you sure you want to delete the trained key for $1?",
+    "placeholders": {
+      "host": {
+        "content": "$1"
+      }
+    }
+  },
+  "toast_extension_disabled": {
+    "message": "Mample: Extension disabled, please enable from menu."
+  },
+  "toast_tracking_started": {
+    "message": "Mample: Tracking started. You will be notified when it's done."
+  },
+  "toast_selection_cleared": {
+    "message": "Mample: Selection cleared and observer stopped."
+  },
+  "toast_system_done": {
+    "message": "System done: "
+  },
+  "toast_sw_system_done": {
+    "message": "SW System done: "
+  },
+  "toast_learned_clipboard": {
+    "message": "Mample learned! The custom code is copied to clipboard (You can paste it to me)."
+  },
+  "toast_no_system_support": {
+    "message": "This site does not have Secret Agent support yet. Please select a key using /mample."
+  },
+  "ERROR_NOT_CONNECTED": {
+    "message": "You are not connected to a Mample account. Please click the extension icon and scan the QR code."
+  },
+  "ERROR_EXTENSION_DISABLED": {
+    "message": "Notification not sent because Mample extension is disabled."
+  },
+  "ERROR_CONNECTION_LOST": {
+    "message": "Connection disconnected from phone! Please scan the QR code again from the extension menu."
+  },
+  "popup_title": {
+    "message": "Mample Notification"
+  },
+  "popup_message": {
+    "message": "Selected key detected (Process started).<br>Would you like to receive a notification?"
+  },
+  "popup_yes": {
+    "message": "Yes"
+  },
+  "popup_no": {
+    "message": "No"
+  }
+}

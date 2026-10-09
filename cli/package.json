@@ -1,0 +1,41 @@
+{
+  "name": "mample",
+  "version": "1.0.2",
+  "description": "Send notifications to your Android phone from terminal commands and AI coding workflows.",
+  "keywords": [
+    "push notification",
+    "cli notification",
+    "pushbullet alternative",
+    "terminal to phone",
+    "alert",
+    "build notification",
+    "webhook alternative",
+    "automation",
+    "notify"
+  ],
+  "main": "bin/mample.js",
+  "bin": {
+    "mample": "bin/mample.js"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.js"
+  },
+  "author": "Mample",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/odun55/mample-open-source.git",
+    "directory": "cli"
+  },
+  "homepage": "https://mample.vercel.app",
+  "bugs": {
+    "url": "https://github.com/odun55/mample-open-source/issues"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "commander": "^11.1.0",
+    "qrcode-terminal": "^0.12.0"
+  }
+}

@@ -1,0 +1,19 @@
+# Mample
+
+Mample is a free Android mobile app and terminal CLI workflow for notifications when builds, scripts and AI coding tasks finish. Pair compatible mobile and CLI builds with mample auth --qr or manual Secret Key entry. No email/password registration is required; Firebase creates an anonymous session.
+
+## Current scope
+- No monthly notification quota, premium tier or subscription.
+- Short-term request limits protect against spam.
+- Terminal QR pairing is implemented in source: a single-use 90-second invitation leads to a connection without automatic expiry. Compatible mobile, CLI and backend releases are required; source implementation does not imply public package availability.
+- Public mobile availability is shown in the website's release section.
+- Browser extensions and browser download notifications are in development; existing code and demos are preserved on the separate extension page.
+- Notification messages are temporarily queued in Firebase. The most recent 50 history entries are stored locally on the phone.
+
+## Links
+- [Source repository](https://github.com/odun55/mample-open-source)
+- [Homepage](https://mample.vercel.app/en)
+- [Mobile & CLI guide](https://mample.vercel.app/en/guide)
+- [Browser extension](https://mample.vercel.app/en/extension)
+- [Privacy policy](https://mample.vercel.app/en/privacy)
+- [Terms of use](https://mample.vercel.app/en/terms)

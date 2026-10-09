@@ -1,0 +1,11 @@
+{
+  "indexes": [],
+  "fieldOverrides": [
+    {
+      "collectionGroup": "cli_pairing_invites",
+      "fieldPath": "cleanup_at",
+      "ttl": true,
+      "indexes": []
+    }
+  ]
+}
