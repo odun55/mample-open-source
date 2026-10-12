@@ -1,9 +1,21 @@
+.title {
+  width: 100%;
+  container-type: inline-size;
+}
+
 .wrapper {
   display: inline-grid;
+  max-width: 100%;
   vertical-align: bottom;
   color: var(--primary);
   overflow: hidden;
   position: relative;
+}
+
+.title:lang(tr) .wrapper {
+  /* Keep every rotating phrase on one line within the available title width. */
+  white-space: nowrap;
+  font-size: min(1em, 8.5cqw);
 }
 
 .word {
@@ -30,4 +42,25 @@
   grid-area: 1 / 1;
   opacity: 0;
   pointer-events: none;
+}
+
+.initialWord { grid-area: 1 / 1; }
+@media (prefers-reduced-motion: reduce) {
+  .word { animation: none; }
+  .wordOut { animation: none; opacity: 0; }
+}
+
+@media (max-width: 900px) and (prefers-reduced-motion: reduce) {
+  .word { animation: fadeIn 0.35s ease-out both; }
+  .wordOut { animation: fadeOut 0.35s ease-out both; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
 }

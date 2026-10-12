@@ -4,13 +4,19 @@ const USER_LIMIT = 20;
 
 // Both counters are consumed atomically, including under concurrent requests.
 // UID stays the same when connections or CLI credentials are replaced.
-async function checkRateLimits(db, userId, connectionKey, clock = Date.now) {
+async function checkRateLimits(db, userId, connectionKey, clock = Date.now, ownerUid = null) {
   const limits = [
     { ref: db.collection("rateLimits").doc(connectionKey), max: CONNECTION_LIMIT },
     { ref: db.collection("rateLimits").doc(`user_${userId}`), max: USER_LIMIT },
   ];
   return db.runTransaction(async (transaction) => {
     const now = clock();
+    if (ownerUid) {
+      const user = await transaction.get(db.collection("users").doc(ownerUid));
+      if (!user.exists || user.data().notifications_disabled === true) {
+        return { allowed: false, retryAfter: 0 };
+      }
+    }
     const snapshots = await transaction.getAll(...limits.map((limit) => limit.ref));
     const windows = snapshots.map((doc) => {
       const timestamps = doc.exists ? doc.data().timestamps : [];
@@ -27,7 +33,8 @@ async function checkRateLimits(db, userId, connectionKey, clock = Date.now) {
     }
     if (retryAfter > 0) return { allowed: false, retryAfter };
     limits.forEach((limit, i) => {
-      transaction.set(limit.ref, { timestamps: [...windows[i], now] });
+      transaction.set(limit.ref, { timestamps: [...windows[i], now],
+        ...(ownerUid ? { owner_uid: ownerUid } : {}) });
     });
     return { allowed: true, retryAfter: 0 };
   });

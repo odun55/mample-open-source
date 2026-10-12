@@ -16,7 +16,9 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+9
+# Keep the build number here in sync with installed/distributed builds.
+# Increment it here for a new version; avoid temporary --build-number overrides.
+version: 1.0.0+23
 
 environment:
   sdk: ^3.9.2
@@ -38,7 +40,8 @@ dependencies:
   firebase_messaging: ^15.0.0
   mobile_scanner: ^7.2.0
   shared_preferences: ^2.5.5
-  google_fonts: ^8.1.0
+  sqflite: ^2.4.4+1
+  in_app_review: ^2.0.12
   http: ^1.6.0
   firebase_auth: ^5.0.0
   cloud_firestore: ^5.0.0
@@ -62,6 +65,7 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
+  sqflite_common_ffi: ^2.4.1
   flutter_launcher_icons: ^0.14.4
   flutter_native_splash: ^2.4.1
 
@@ -79,6 +83,29 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/
+    - assets/images/onboarding/03-benefits.png
+    - assets/fonts/OFL.txt
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter.ttf
+          weight: 100
+        - asset: assets/fonts/Inter.ttf
+          weight: 200
+        - asset: assets/fonts/Inter.ttf
+          weight: 300
+        - asset: assets/fonts/Inter.ttf
+          weight: 400
+        - asset: assets/fonts/Inter.ttf
+          weight: 500
+        - asset: assets/fonts/Inter.ttf
+          weight: 600
+        - asset: assets/fonts/Inter.ttf
+          weight: 700
+        - asset: assets/fonts/Inter.ttf
+          weight: 800
+        - asset: assets/fonts/Inter.ttf
+          weight: 900
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

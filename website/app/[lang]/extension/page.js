@@ -4,6 +4,7 @@ import ExtensionGuide from '../../../components/ExtensionGuide';
 import { getDictionary } from '../../../getDictionary';
 import styles from '../guide/guide.module.css';
 import ui from '../../page.module.css';
+import { siteUrl } from '../../../lib/siteUrl';
 
 export async function generateMetadata({ params }) {
   const { lang } = await params;
@@ -12,7 +13,7 @@ export async function generateMetadata({ params }) {
     alternates: { canonical: '/' + lang + '/extension',
       languages: { en: '/en/extension', tr: '/tr/extension', 'x-default': '/en/extension' } },
     openGraph: { title: t.extension_title, description: t.extension_desc,
-      url: 'https://mample.vercel.app/' + lang + '/extension' },
+      url: `${siteUrl}/${lang}/extension` },
   };
 }
 export default async function ExtensionPage({ params }) {

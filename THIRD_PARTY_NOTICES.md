@@ -1,5 +1,12 @@
 # Third-party notices
 
+## Website brand assets
+
+The Google Play badges and GitHub logo lockup in `website/public/brand/` are
+official, unmodified third-party brand assets. Their owners' brand guidelines
+apply; these assets are not covered by Mample's source-code license.
+Sources and usage details: `website/public/brand/README.md`.
+
 ## QRCode.js
 
 The bundled `popup/qrcode.min.js` files in chrome-extension, edge-extension,

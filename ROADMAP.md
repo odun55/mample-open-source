@@ -1,62 +1,27 @@
-# Mample — güncel yol haritası
+# Mample roadmap
 
-Güncelleme: 9 Ekim 2026. Bu liste kaynak kodu, yerel doğrulama ve yayın durumunu ayrı tutar. Önceki çalışmalar [tarihsel arşivde](docs/history/roadmap-before-open-source.md) korunur; arşivdeki premium/ödeme maddeleri güncel ürün davranışı değildir.
+Updated 12 October 2026. Source completion, deployed service behavior and public package availability are tracked separately.
 
-## Mample 1.0 kapsamı
+## Current scope
 
-Android uygulama + CLI + Firebase bildirim akışı. Terminal erişimi olan yapay zekâ asistanları CLI'ı çağırabilir; Mample görev bitişini kendiliğinden algılamaz. Premium, abonelik veya aylık bildirim kotası yoktur. Kısa süreli kötüye kullanım sınırları korunur. Eklenti kodları Mample 2.0 geliştirme kapsamında korunur.
+- Android app, CLI and Firebase notification delivery.
+- Manual Secret Key and QR pairing. QR invitations expire after 90 seconds; registered terminal connections remain until revoked.
+- Anonymous mobile account, connection management and account deletion.
+- English and Turkish website, usage guide and privacy information.
+- Free use with short term anti spam limits. The latest 200 notifications are stored locally.
 
-## Kaynakta tamamlananlar
+The public repository contains current source. A feature present here may require a newer mobile build, CLI package or backend deployment than the version a user has installed. The Android app's public Play release is pending production access; an internal test release and production access application do not make it publicly downloadable.
 
-- [x] Mobil premium/ödeme ve aylık kota akışlarının kaldırılması; son 50 bildirimin yerel geçmişinin korunması.
-- [x] CLI QR ve manuel Secret Key seçeneklerinin aynı bağlantı akışına bağlanması.
-- [x] Tek kullanımlık 90 saniyelik QR daveti; süresiz terminal bağlantısı.
-- [x] Tekrar eşleştirmede terminal kimliğinin korunması; sahiplik kontrollü disconnect.
-- [x] CLI ve Firebase kritik eşleştirme/bildirim akışları için gerçek Node testleri.
-- [x] Mobil/CLI rehberi ile tarayıcı eklentisi sayfasının ayrılması.
-- [x] Türkçe/İngilizce QR, anonim oturum ve yapay zekâ izin anlatımının düzeltilmesi.
-- [x] README, CLI/mobil/web belgeleri ve llms.txt içindeki eski QR anlatımının düzeltilmesi.
-- [x] MIT lisansı, katkı rehberi, güvenlik bildirim süreci, üçüncü taraf lisans bildirimi ve geliştirme kurulumu.
-- [x] Web destek tasarımı; gerçek ödeme adresi gelene kadar ödeme butonunun gizlenmesi.
-- [x] Web ve Google Play çekim/yayın planlarının hazırlanması.
+## In development
 
-## Açık kaynak yayını
+- Browser page element and download notifications across the extension variants.
+- Better independent setup for contributors using their own Firebase project.
+- Real device and release channel validation after each product change.
 
-- [x] Yerel Git geçmişinin hedefli ve değerleri gizleyen taraması yapıldı.
-- [x] Güvenli yayın yolu seçildi: `odun55/Mample` özel kalacak; `odun55/mample-open-source` temiz kaynaklarla yeni geçmişten başlayacak.
-- [x] Üretim/telefon günlükleri, eklenti ZIP'leri ve yerel Android Firebase yapılandırması kaynak dağıtımından çıkarıldı; yerel kopyalar korundu.
-- [x] Temiz kaynak kopyası ayrı secret scanner ile tarandı; eski Git geçmişi, uzak refs ve Actions kayıt/artefaktları yeni depoya aktarılmayacak.
-- [x] Temiz kaynak ve belgeler GitHub'a gönderildi; MIT lisansı ve otomatik kaynak kontrolleri doğrulandı.
-- [x] [Yeni depo](https://github.com/odun55/mample-open-source) herkese açık yapıldı; anonim erişim doğrulandı. Eski depo özel kaldı.
+## Release checks
 
-Eski özel depodaki anahtar/token kayıtlarının geçerliliği ayrı bir işletim kontrolüdür; bu kayıtlar yeni açık kaynak depoya taşınmaz.
+- Verify the installed CLI version and package behavior after npm publication.
+- Check signed Android release behavior, App Check, background notification delivery and account deletion on a real device.
+- Add the real Google Play listing URL to the website only after public availability is confirmed.
 
-## Ürün yayını için kalanlar
-
-- [ ] Gerçek Android telefonda QR/Secret Key bağlantısı, ön plan/arka plan/kilit ekranı bildirimi, anahtar yenileme ve bağlantı kaldırma testi.
-- [ ] CLI 1.0.2 kaynak değişikliklerinin npm yayın durumu ve temiz paket kurulumu doğrulanacak.
-- [ ] Desteklenen Firebase çalışma zamanına geçiş ayrıca test edilip dağıtılacak; App Check ve maliyet ayarları canlı panelden doğrulanacak.
-- [ ] Güncel imzalı Android AAB ve test kanalı doğrulanacak; Play Console ücretsiz model ve veri beyanları kontrol edilecek.
-- [ ] Web metin değişiklikleri Vercel'e dağıtılıp iki dilde kontrol edilecek. Mobil “Yakında” durumu gerçek yayın gerçekleşene kadar korunacak.
-- [ ] Web demo çekimleri ve MP4/GIF üretimi — kullanıcının tercihiyle sonraya bırakıldı.
-- [ ] Google Play gerçek telefon görselleri — çekim aşamasında hazırlanacak.
-- [ ] Destek adresi — kullanıcının tercihiyle boş kalacak.
-
-Açık kaynak yayını ile mobil mağaza/npm yayını farklı işlerdir; kaynak açılması fiziksel cihaz testi veya mağaza onayı anlamına gelmez.
-
-## Mample 2.0
-
-- [ ] Tarayıcı DOM takibi ve indirme bildirimleri için ayrı yayın/test akışı.
-- [ ] Arka plan sekmesi davranışlarının araştırılması; görünür sayfa önerisinin korunması.
-- [ ] Heartbeat veya sesli çözüm ancak diğer seçenekler yetersizse değerlendirilecek.
-
-## İlgili belgeler
-
-- [Geliştirme kurulumu](docs/development.md)
-- [Katkı rehberi](CONTRIBUTING.md) · [Güvenlik](SECURITY.md)
-- [Açık kaynak yayın kaydı](docs/open-source-release.md)
-- [Ücretsiz Core geçiş kaydı](docs/free-core-transition.md)
-- [QR teknik akışı](docs/cli-qr-pairing.md)
-- [Web medya çekim planı](docs/marketing-capture-plan.md)
-- [Google Play hazırlığı](docs/google-play-release-checklist.md)
-- [Google Play ücretsiz sürüm planı](docs/store_listings/google_play_free_release_plan.md)
+See [development setup](docs/development.md), [contribution guide](CONTRIBUTING.md) and [QR pairing design](docs/cli-qr-pairing.md).

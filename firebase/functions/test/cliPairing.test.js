@@ -8,9 +8,9 @@ const keys = crypto.generateKeyPairSync('rsa', { modulusLength: 3072,
 const hash = (value) => crypto.createHash('sha256').update(value).digest('hex');
 const terminalKey = 'a'.repeat(64), claimToken = 'b'.repeat(64), inviteId = hash(terminalKey);
 
-function harness({ disabled = false, allowed = true } = {}) {
+function harness({ disabled = false, allowed = true, secretKey = 'phone-secret' } = {}) {
   let time = 1000;
-  const docs = new Map([['users/alice', { cli_secret_key_hash: hash('phone-secret'), notifications_disabled: disabled }]]);
+  const docs = new Map([['users/alice', { cli_secret_key_hash: hash(secretKey), notifications_disabled: disabled }]]);
   let queue = Promise.resolve();
   const snapshot = (ref) => ({ exists: docs.has(ref.path), data: () => docs.get(ref.path) });
   const db = {
@@ -49,7 +49,7 @@ function harness({ disabled = false, allowed = true } = {}) {
     return res;
   }
   const complete = (data = {}, auth = { uid: 'alice' }) => sandbox.exports.completeCLIPairing({ auth,
-    data: { invite_id: inviteId, claim_token: claimToken, cli_secret_key: 'phone-secret', ...data } });
+    data: { invite_id: inviteId, claim_token: claimToken, cli_secret_key: secretKey, ...data } });
   return { docs, send, complete, startBody, callableOptions, advance: (ms) => { time += ms; } };
 }
 
@@ -74,12 +74,43 @@ test('QR is single use even with concurrent phone claims', async () => {
   assert.equal(results.find((r) => r.status === 'rejected').reason.code, 'failed-precondition');
 });
 
+test('compact Secret Keys survive QR encryption without changing the credential', async () => {
+  const secretKey = 'm-' + 'a'.repeat(26);
+  const h = harness({ secretKey });
+  await h.send();
+  await h.complete();
+  const response = await h.send({ action: 'poll', terminal_key: terminalKey });
+  assert.equal(response.body.status, 'paired');
+  assert.equal(crypto.privateDecrypt({ key: keys.privateKey, oaepHash: 'sha256' },
+    Buffer.from(response.body.encrypted_key, 'base64')).toString(), secretKey);
+});
+
 test('expiry rejects claims and retries never extend old QR lifetime', async () => {
   const h = harness();
   await h.send();
   h.advance(90_000);
   assert.equal((await h.send()).body.status, 'expired');
   await assert.rejects(h.complete(), { code: 'failed-precondition' });
+});
+
+test('only the terminal polling key can cancel an invitation', async () => {
+  const h = harness();
+  await h.send();
+  await h.send({ action: 'cancel', terminal_key: claimToken });
+  assert.equal(h.docs.get('cli_pairing_invites/' + inviteId).status, 'pending');
+  const cancelled = await h.send({ action: 'cancel', terminal_key: terminalKey });
+  assert.equal(cancelled.body.status, 'cancelled');
+  await assert.rejects(h.complete(), { code: 'failed-precondition' });
+  assert.equal((await h.send({ action: 'poll', terminal_key: terminalKey })).body.status, 'expired');
+});
+
+test('cancelling an already scanned invite removes its recovery ciphertext', async () => {
+  const h = harness();
+  await h.send();
+  await h.complete();
+  await h.send({ action: 'cancel', terminal_key: terminalKey });
+  assert.equal(h.docs.get('cli_pairing_invites/' + inviteId).encrypted_key, null);
+  assert.equal((await h.send({ action: 'poll', terminal_key: terminalKey })).body.status, 'expired');
 });
 
 test('QR does not grant polling access or reveal the key', async () => {

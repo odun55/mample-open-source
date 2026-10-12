@@ -12,7 +12,7 @@ const INVITE_MS = 90_000;
 exports.cliPairing = onRequest({ ...options, invoker: "public" }, async (req, res) => {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
   const { action, terminal_key, claim_token, public_key } = req.body || {};
-  if (!["start", "poll"].includes(action) || !token(terminal_key) ||
+  if (!["start", "poll", "cancel"].includes(action) || !token(terminal_key) ||
       (action === "start" && (!token(claim_token) || typeof public_key !== "string" || public_key.length > 1000))) {
     return res.status(400).json({ error: "Invalid pairing request" });
   }
@@ -38,8 +38,14 @@ exports.cliPairing = onRequest({ ...options, invoker: "public" }, async (req, re
     }
     const result = await db.runTransaction(async (tx) => {
       const doc = await tx.get(ref);
+      if (action === "cancel") {
+        if (doc.exists) tx.update(ref, { status: "cancelled", claim_hash: FieldValue.delete(),
+          encrypted_key: FieldValue.delete(), expires_at: Timestamp.fromMillis(Date.now()) });
+        return { status: "cancelled" };
+      }
       if (doc.exists) {
         const invite = doc.data();
+        if (invite.status === "cancelled") return { status: "expired" };
         if (invite.status === "paired") return { status: "paired", encrypted_key: invite.encrypted_key };
         if (invite.expires_at.toMillis() <= Date.now()) return { status: "expired" };
         return { status: "pending", invite_id: ref.id, expires_at: invite.expires_at.toMillis() };
@@ -69,7 +75,8 @@ exports.completeCLIPairing = onCall({ ...options, enforceAppCheck: true }, async
     throw new HttpsError("invalid-argument", "Invalid terminal QR or Secret Key.");
   }
   const db = getFirestore();
-  const limit = await checkRateLimits(db, `pairing_${request.auth.uid}`, `pairing_claim_${request.auth.uid}`);
+  const limit = await checkRateLimits(db, `pairing_${request.auth.uid}`, `pairing_claim_${request.auth.uid}`,
+    Date.now, request.auth.uid);
   if (!limit.allowed) throw new HttpsError("resource-exhausted", "Too many pairing attempts.");
   return db.runTransaction(async (tx) => {
     const inviteRef = db.collection("cli_pairing_invites").doc(invite_id);
@@ -89,7 +96,8 @@ exports.completeCLIPairing = onCall({ ...options, enforceAppCheck: true }, async
     // Persist only ciphertext. Only the originating terminal has the private key.
     const encryptedKey = crypto.publicEncrypt({ key: invite.public_key,
       padding: crypto.constants.RSA_PKCS1_OAEP_PADDING, oaepHash: "sha256" }, Buffer.from(cli_secret_key)).toString("base64");
-    tx.update(inviteRef, { status: "paired", encrypted_key: encryptedKey, claim_hash: FieldValue.delete() });
+    tx.update(inviteRef, { status: "paired", uid: request.auth.uid,
+      encrypted_key: encryptedKey, claim_hash: FieldValue.delete() });
     return { success: true };
   });
 });

@@ -17,6 +17,7 @@ function fakeDb() {
           getAll: async (...refs) => refs.map(ref => ({
             exists: documents.has(ref.id), data: () => documents.get(ref.id),
           })),
+          get: async (ref) => ({ exists: documents.has(ref.id), data: () => documents.get(ref.id) }),
           set: (ref, data) => writes.push([ref.id, data]),
         });
         writes.forEach(([id, data]) => documents.set(id, data));
@@ -74,4 +75,16 @@ test("invalid credentials and payloads are rejected", () => {
   assert.equal(validateNotificationRequest({ cli_secret_key: "mample-old-key", task_name: "Done" }), null);
   assert.equal(validateNotificationRequest({ connection_id: "uuid", source: "CLI" }), null);
   assert.equal(validateNotificationRequest({ connection_id: "uuid", cli_secret_key: "secret" }), null);
+});
+
+test("deleting accounts cannot recreate rate records; counters retain ownership for deletion", async () => {
+  const db = fakeDb();
+  db.documents.set("alice", { notifications_disabled: false });
+  assert.equal((await checkRateLimits(db, "alice", "conn_pc", () => 100000, "alice")).allowed, true);
+  assert.equal(db.documents.get("conn_pc").owner_uid, "alice");
+  db.documents.set("alice", { notifications_disabled: true });
+  assert.equal((await checkRateLimits(db, "alice", "cli_new", () => 100000, "alice")).allowed, false);
+  assert.equal(db.documents.has("cli_new"), false);
+  db.documents.delete("alice");
+  assert.equal((await checkRateLimits(db, "alice", "cli_new", () => 100000, "alice")).allowed, false);
 });

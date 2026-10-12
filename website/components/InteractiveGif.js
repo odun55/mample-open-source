@@ -2,22 +2,24 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import styles from './InteractiveGif.module.css';
 import { gifDuration } from '../lib/gifDuration';
+import useVisibleMedia from './useVisibleMedia';
 
-function Media({ name, title, active, visible, cycle, onNext, onProgress }) {
+function Media({ name, title, active, visible, loaded, cycle, onNext, onProgress }) {
   const videoRef = useRef(null);
   const [kind, setKind] = useState('video');
   const [ready, setReady] = useState(false);
   const elapsed = useRef(0);
   const [duration, setDuration] = useState(8000);
+  const shouldLoad = loaded && active;
 
   useEffect(() => {
-    if (kind !== 'gif') return;
+    if (kind !== 'gif' || !shouldLoad) return;
     const controller = new AbortController();
     fetch('/images/' + name + '.gif', { signal: controller.signal })
       .then(response => { if (!response.ok) throw Error('Missing GIF'); return response.arrayBuffer(); })
       .then(buffer => setDuration(gifDuration(buffer))).catch(() => {});
     return () => controller.abort();
-  }, [kind, name]);
+  }, [kind, name, shouldLoad]);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -65,11 +67,11 @@ function Media({ name, title, active, visible, cycle, onNext, onProgress }) {
     return <div className={styles.placeholderText}><span>{title}</span><small>Mample</small></div>;
   }
   if (kind === 'gif') {
-    return <img key={active ? cycle : 'idle'} src={'/images/' + name + '.gif'} alt={title}
+    return <img key={active ? cycle : 'idle'} src={shouldLoad ? '/images/' + name + '.gif' : undefined} alt={title}
       className={styles.media} onLoad={() => setReady(true)}
       onError={() => { setKind('missing'); setReady(true); }} />;
   }
-  return <video ref={videoRef} src={'/images/' + name + '.mp4'} muted playsInline preload="auto"
+  return <video ref={videoRef} src={shouldLoad ? '/images/' + name + '.mp4' : undefined} muted playsInline preload={shouldLoad ? "auto" : "none"}
     className={styles.media} aria-label={title}
     onLoadedData={() => setReady(true)}
     onError={() => { setKind('gif'); setReady(false); }}
@@ -93,23 +95,11 @@ export default function InteractiveGif({
   const [active, setActive] = useState(0);
   const [cycle, setCycle] = useState(0);
   const [progress, setProgress] = useState(0);
-  const [visible, setVisible] = useState(false);
   const wrapperRef = useRef(null);
+  const { loaded, visible } = useVisibleMedia(wrapperRef);
   const total = steps.length;
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(([entry]) => setVisible(entry.isIntersecting && !document.hidden), { threshold: 0.3 });
-    if (wrapperRef.current) observer.observe(wrapperRef.current);
-    const onVisibility = () => {
-      if (document.hidden) setVisible(false);
-      else if (wrapperRef.current) {
-        const rect = wrapperRef.current.getBoundingClientRect();
-        setVisible(rect.bottom > 0 && rect.top < window.innerHeight);
-      }
-    };
-    document.addEventListener('visibilitychange', onVisibility);
-    return () => { observer.disconnect(); document.removeEventListener('visibilitychange', onVisibility); };
-  }, []);
+
 
   const select = useCallback((index) => {
     setActive(index);
@@ -131,7 +121,7 @@ export default function InteractiveGif({
             className={styles.mediaLayer + (active === index ? ' ' + styles.activeMedia : '')}
             aria-hidden={active !== index}>
             <Media name={'gif_' + (startIndex + index)} title={step.title}
-              active={active === index} visible={visible} cycle={active === index ? cycle : 0}
+              active={active === index} visible={visible} loaded={loaded} cycle={active === index ? cycle : 0}
               onNext={next} onProgress={reportProgress} />
           </div>)}
         </div>

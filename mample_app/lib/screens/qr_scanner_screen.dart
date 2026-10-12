@@ -6,6 +6,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../services/cli_pairing_code.dart';
+import '../services/diagnostics_service.dart';
+import '../services/firebase_error_message.dart';
 import '../l10n/app_localizations.dart';
 
 class QRScannerScreen extends StatefulWidget {
@@ -34,8 +36,9 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
 
     // 3 saniyelik okuma bekleme süresi (debounce)
     if (_lastScanTime != null &&
-        DateTime.now().difference(_lastScanTime!).inSeconds < 3)
+        DateTime.now().difference(_lastScanTime!).inSeconds < 3) {
       return;
+    }
     _lastScanTime = DateTime.now();
 
     final List<Barcode> barcodes = capture.barcodes;
@@ -61,8 +64,9 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
         if (cliInvite != null) {
           const storage = FlutterSecureStorage();
           final secretKey = await storage.read(key: 'cli_secret_key');
-          if (secretKey == null)
+          if (secretKey == null) {
             throw const FormatException('Secret Key is unavailable');
+          }
           await FirebaseFunctions.instanceFor(
             region: 'europe-west1',
           ).httpsCallable('completeCLIPairing').call<Map<String, dynamic>>({
@@ -102,7 +106,8 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
       await Future.delayed(const Duration(milliseconds: 2000));
       if (!mounted) return;
       Navigator.of(context).pop();
-    } catch (e) {
+    } catch (e, stack) {
+      DiagnosticsService.record('QR pairing', e, stack);
       if (!mounted) return;
       setState(() {
         _isProcessing = false;
@@ -111,7 +116,7 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('${l10n.translate('connection_error')}${e.toString()}'),
+          content: Text(firebaseErrorMessage(e, l10n, pairing: true)),
           backgroundColor: Colors.redAccent,
         ),
       );
@@ -149,19 +154,6 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
                 ),
                 borderRadius: BorderRadius.circular(24),
               ),
-            ),
-          ),
-
-          Positioned(
-            bottom: 40,
-            left: 0,
-            right: 0,
-            child: Text(
-              l10n.translate('align_qr_code'),
-              textAlign: TextAlign.center,
-              style: Theme.of(
-                context,
-              ).textTheme.bodyLarge?.copyWith(backgroundColor: Colors.black54),
             ),
           ),
 

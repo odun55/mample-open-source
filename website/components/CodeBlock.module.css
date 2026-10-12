@@ -1,0 +1,10 @@
+.block { margin: 16px 0; border: 1px solid rgba(255,255,255,.1); border-radius: 12px; background: var(--surface); overflow: hidden; }
+.toolbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 8px 16px; border-bottom: 1px solid rgba(255,255,255,.06); color: var(--text-muted); font-size: 12px; }
+.toolbar button { min-height: 32px; padding: 4px 12px; border: 1px solid rgba(136,212,158,.25); border-radius: 6px; background: rgba(136,212,158,.08); color: var(--primary); font: inherit; cursor: pointer; }
+.toolbar button:hover { background: rgba(136,212,158,.16); }
+.toolbar button:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.command { margin: 0; padding: 16px 20px; overflow-x: auto; color: #e4e4e7; font: .95rem/1.6 Consolas, Monaco, monospace; }
+.command code { font: inherit; }
+.task { color: var(--text-muted); }
+.notification { color: var(--primary); }
+.status { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }

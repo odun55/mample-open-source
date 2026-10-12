@@ -3,7 +3,7 @@ import InteractiveGif from './InteractiveGif';
 export default function ExtensionDemo({ t }) {
   return (
           
-          <div id="web" style={{ paddingTop: '100px' }}>
+          <div id="web" className={styles.workflowBlock}>
             <h3 className={styles.subSectionTitle} style={{ marginTop: 0 }}>{t.how_1_title}</h3>
             <InteractiveGif 
               startIndex={1}

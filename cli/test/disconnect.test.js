@@ -69,6 +69,7 @@ test("disconnect is routed as a command rather than notification text", async ()
     process: { argv: ["node", "mample", "disconnect"], exit() { throw new Error("Unexpected exit"); } },
     require: (name) => {
       if (name === "commander") return { program };
+      if (name === "../package.json") return require('../package.json');
       if (name === "../lib/disconnect") return { disconnect: async () => { disconnected++; } };
       if (name === "../lib/config") return { getConfig: () => ({}), saveConfig() {} };
       if (name === "../lib/notify") return { triggerNotification: async () => { notified++; } };

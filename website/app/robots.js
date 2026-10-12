@@ -1,11 +1,12 @@
-export default function robots() {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://mample.vercel.app';
+import { siteUrl } from '../lib/siteUrl';
 
+export default function robots() {
   return {
     rules: {
       userAgent: '*',
       allow: '/',
+      disallow: '/api/',
     },
-    sitemap: `${baseUrl}/sitemap.xml`,
+    sitemap: `${siteUrl}/sitemap.xml`,
   };
 }

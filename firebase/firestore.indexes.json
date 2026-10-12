@@ -2,6 +2,12 @@
   "indexes": [],
   "fieldOverrides": [
     {
+      "collectionGroup": "account_deletion_guards",
+      "fieldPath": "cleanup_at",
+      "ttl": true,
+      "indexes": []
+    },
+    {
       "collectionGroup": "cli_pairing_invites",
       "fieldPath": "cleanup_at",
       "ttl": true,

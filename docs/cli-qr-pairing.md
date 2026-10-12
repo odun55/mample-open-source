@@ -1,9 +1,10 @@
 # CLI QR pairing
 
-`mample auth --qr` (or `mample auth` without an argument) is an alternative way to
+`mample auth qr` (or `mample auth` without an argument) is an alternative way to
 enter the same Secret Key used by `mample auth <secret_key>`. Both call
 `cli/lib/auth.js` and the existing `registerCLIConnection` endpoint. Notification,
 revocation, key rotation, terminal identity and connection lifetime stay identical.
+The previous `mample auth --qr` syntax remains supported for compatibility.
 
 The terminal creates a random polling key, a separate random QR claim token and an
 RSA-3072 key pair. Recovery material is saved through the existing protected,
@@ -20,6 +21,10 @@ the existing auth flow. A lost response or failed local write can be retried usi
 the pending recovery material. Existing saved credentials remain until auth succeeds.
 
 Expired invitations cannot be revived; refreshing creates new random credentials.
+Interactive terminals use R to refresh and Q to cancel, without Enter. There is
+no automatic refresh. Expired invitations wait for a deliberate refresh, and
+non-interactive callers rerun the command. Refresh and cancellation revoke the
+previous invite with its polling key before discarding local recovery material.
 Consumed invitations reject a second scan, including concurrent attempts. The
 paired ciphertext remains recoverable until the invitation record is cleaned up;
 it never extends or expires the permanent `connections` document. Firestore rules
@@ -67,3 +72,28 @@ Secret Key auth, `mample disconnect`, and existing extension UUID scanning.
 - Deployment reported that Node.js 20 is deprecated and scheduled for
   decommissioning on 2026-10-30. Plan a supported runtime upgrade separately;
   this deployment completed successfully on the existing runtime.
+
+## Manual QR controls and mobile diagnostics — 2026-10-09
+
+- CLI 1.0.3 supports immediate `Q` cancellation and `R` renewal without Enter.
+  There is no automatic renewal. An expired QR waits for an explicit action in
+  an interactive terminal; server-side 90-second expiry remains enforced.
+- Deployed the updated `cliPairing` function in `europe-west1`. Cancelling or
+  replacing an invite invalidates its polling key and removes any pending
+  ciphertext. Existing authenticated terminal connections are preserved.
+- Verified 27 CLI tests, 31 Functions tests, and live global CLI renewal and
+  cancellation. npm publication of 1.0.3 remains a separate release step.
+- Mobile now distinguishes empty device lists from authorization/network
+  failures. Scanner messages no longer show raw stack traces. Settings exposes
+  a local last-error report with its original occurrence time, redacted details,
+  copying, and an optional email draft. Only the latest error is retained;
+  Delete Account and Data also removes this report. No report is uploaded automatically.
+- The phone's App Check debug token was registered by the project owner.
+  A subsequent DNS failure was observed; a later phone-side probe successfully
+  resolved and reached `firestore.googleapis.com`, but the app still logged
+  `UNAVAILABLE`/`UnknownHostException` for that same hostname after restart.
+  Shell connectivity therefore does not establish app connectivity, successful
+  App Check validation, or end-to-end pairing. No IP allowlist or security-rule
+  changes were made as a workaround.
+- Physical-phone QR completion, notification delivery, replay rejection,
+  disconnection, and existing extension scanning still need acceptance checks.

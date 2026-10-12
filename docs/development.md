@@ -11,8 +11,8 @@ cd mample-open-source
 
 Use Node.js 22 for local JavaScript tooling, npm, Flutter with the Dart SDK
 required by `mample_app/pubspec.yaml`, and Android SDK/Java tooling compatible
-with the Android Gradle configuration. Firebase Functions currently declares
-Node 20; changing the deployed runtime is a separate tested task.
+with the Android Gradle configuration. Firebase Functions declares Node.js 22
+in `firebase/functions/package.json`; use the same major version for backend tests.
 
 Android is the mobile release target. Generated web/Windows files are not a
 complete supported release. Package availability is separate from source.
@@ -27,8 +27,15 @@ npm run dev
 
 Open `http://localhost:3000/tr` or `/en`. Keep both dictionaries aligned.
 `npm run build` checks production output; Google Fonts may require network.
-Demo media remains a placeholder until captures are supplied. Copy
-`.env.example` to `.env.local` for optional local support-link configuration.
+The terminal and AI sections use MP4 players; missing media shows a placeholder.
+See `website/README.md` for capture assets and playback behavior. Copy
+`.env.example` to `.env.local` for optional local support and store-link settings.
+`NEXT_PUBLIC_SUPPORT_URL` defaults to the real Mample support page; an empty value
+hides the button. The yellow Support Mample link is server-rendered and uses the
+bundled Geist font, with no Buy Me a Coffee embed script. Set
+`NEXT_PUBLIC_GOOGLE_PLAY_URL` only after obtaining the real store listing URL;
+otherwise the official badge stays inactive. Restart/rebuild after changing env
+values. Verify both languages, mobile wrapping and keyboard focus for UI edits.
 
 ## CLI
 
@@ -39,10 +46,20 @@ npm test
 npm link
 ```
 
-Use the global `mample` command. Pair with `mample auth --qr` or
+Use the global `mample` command. Pair with `mample auth qr` or
 `mample auth "your-secret-key"`; bare `mample auth` starts QR pairing.
 Credentials live in the current user's `.mample/config.json`; do not share it.
 Tests mock requests. Linking the CLI does not start a backend or pair a phone.
+
+Use `mample ""` for the default notification message configured in the app;
+use `mample "Task completed"` for a custom message. Bare `mample` also selects
+the default. There are no `mample run`, `mample notify` or `mample send` commands.
+In Windows CMD use `mample`; if PowerShell blocks the npm `.ps1` launcher, use
+`mample.cmd` with the same arguments. Both launch the same global CLI.
+Do not change execution policy or loosen credential-file permissions.
+Assistant sandbox access follows the environment approval process.
+Server acceptance does not confirm display on the phone.
+
 
 ## Your own Firebase environment
 
@@ -92,6 +109,37 @@ establish actual delivery.
 
 The CLI runs when invoked; it does not automatically watch tasks. Callers decide
 when to send messages. QR invites expire after 90 seconds; terminal connections
-have no automatic expiry. Manual Secret Key pairing remains supported. The
-latest 50 history entries on the phone are not a delivery quota. Short-term
+have no automatic expiry. Interactive QR pairing uses R to refresh and Q
+to cancel; an expired invitation is never automatically replaced. Cancellation
+requires the updated cliPairing backend so the old invitation is revoked.
+Manual Secret Key pairing remains supported. The
+latest 200 history entries on the phone are not a delivery quota. Short-term
 backend rate limits remain enabled.
+
+New mobile Secret Keys use `m-` followed by 26 lowercase Crockford Base32
+symbols (28 characters total, previously 71). Every symbol is independently
+selected using `Random.secure()`, providing 130 random bits. No existing key is
+truncated, reformatted, or automatically rotated. Stored keys remain usable;
+new installations and explicit key renewal generate the compact format. Renewal
+changes the credential and requires reconnecting clients that use the old key.
+Both formats use the existing SHA-256 verification and QR encryption flow.
+Diagnostics redacts both formats. This does not change QR invite tokens,
+connection identifiers, or rate limits.
+
+## Mobile support link
+
+Settings contains a voluntary Buy Me a Coffee card next to the contact/help
+options. It opens https://buymeacoffee.com/mample by default. Override the profile
+at build time with `--dart-define=MAMPLE_SUPPORT_URL=<real-profile-url>`; no
+source edit is needed. An explicitly empty `--dart-define=MAMPLE_SUPPORT_URL=`
+disables the card and displays Coming soon. Only a Buy Me a Coffee creator
+profile URL is accepted. The active
+card opens the external browser using the existing link-opening fallback.
+Contributions do not unlock features, badges, subscriptions or usage privileges.
+
+For Google Play distribution, review the actual payment flow before enabling
+an external payment link. Google's direct-tip exception requires the full tip
+to reach the creator and no digital goods/services in return; a provider's
+fees and creator shop/membership offerings must be assessed against that rule.
+This UI does not establish store approval. Reference:
+https://support.google.com/googleplay/android-developer/answer/10281818

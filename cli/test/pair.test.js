@@ -10,7 +10,6 @@ function harness() {
     terminal_key: 'a'.repeat(64), claim_token: 'b'.repeat(64),
     public_key: keys.publicKey, private_key: keys.privateKey,
   } };
-  const ciphertext = crypto.publicEncrypt({ key: keys.publicKey, oaepHash: 'sha256' }, Buffer.from('phone-secret')).toString('base64');
   const calls = [], rendered = [];
   const options = { read: () => state, save: (value) => Object.assign(state, value),
     authenticate: async (key) => { calls.push(key); }, render: (value) => rendered.push(value),
@@ -18,7 +17,8 @@ function harness() {
       assert.equal(body.private_key, undefined);
       assert.equal(body.cli_secret_key, undefined);
       if (body.action === 'start') return { status: 'pending', invite_id: 'c'.repeat(64) };
-      return { status: 'paired', encrypted_key: ciphertext };
+      return { status: 'paired', encrypted_key: crypto.publicEncrypt({ key: state.pending_qr.public_key,
+        oaepHash: 'sha256' }, Buffer.from('phone-secret')).toString('base64') };
     } };
   return { state, options, calls, rendered };
 }
@@ -52,18 +52,72 @@ test('a response lost after scanning is recovered without a second scan', async 
   assert.deepEqual(h.calls, ['phone-secret']);
 });
 
-test('expired invites rotate both QR and terminal recovery credentials', async () => {
+test('expired invites do not automatically generate a new QR', async () => {
   const h = harness();
   let count = 0;
   const oldKey = h.state.pending_qr.terminal_key;
   h.options.request = async (body) => {
-    if (++count === 1) return { status: 'expired' };
-    assert.notEqual(body.terminal_key, oldKey);
-    throw new Error('rotation checked');
+    count++;
+    return { status: 'expired' };
   };
-  await assert.rejects(pairTerminal(h.options), /rotation checked/);
-  assert.notEqual(h.state.pending_qr.terminal_key, oldKey);
+  await assert.rejects(pairTerminal(h.options), /expired/);
+  assert.equal(count, 1);
+  assert.equal(h.state.pending_qr.terminal_key, oldKey);
   assert.equal(h.state.cli_secret_key, 'previous');
+});
+
+test('Q cancels the invite without replacing a working connection', async () => {
+  const h = harness();
+  const requests = [];
+  h.options.controls = { interactive: true, take() {}, next: async () => 'cancel', close() {} };
+  h.options.request = async body => {
+    requests.push(body.action);
+    return { status: body.action === 'cancel' ? 'cancelled' : 'pending', invite_id: 'c'.repeat(64) };
+  };
+  assert.equal(await pairTerminal(h.options), false);
+  assert.deepEqual(requests, ['start', 'cancel']);
+  assert.equal(h.state.pending_qr, null);
+  assert.equal(h.state.connection_id, 'old');
+  assert.deepEqual(h.calls, []);
+});
+
+test('R revokes the old QR before creating a fresh invite', async () => {
+  const h = harness();
+  const actions = ['refresh', null];
+  const requests = [];
+  const oldKey = h.state.pending_qr.terminal_key;
+  const request = h.options.request;
+  h.options.controls = { interactive: true, take() {}, next: async () => actions.shift(), close() {} };
+  h.options.request = async body => {
+    requests.push(body);
+    if (body.action === 'cancel') return { status: 'cancelled' };
+    return request(body);
+  };
+  await pairTerminal(h.options);
+  assert.deepEqual(requests.map(r => r.action), ['start', 'cancel', 'start', 'poll']);
+  assert.equal(requests[1].terminal_key, oldKey);
+  assert.notEqual(requests[2].terminal_key, oldKey);
+  assert.equal(h.rendered.length, 2);
+  assert.deepEqual(h.calls, ['phone-secret']);
+});
+
+test('expired interactive QR waits for an explicit refresh command', async () => {
+  const h = harness();
+  const actions = ['refresh', null];
+  let starts = 0;
+  const request = h.options.request;
+  h.options.controls = { interactive: true, take() {}, next: async () => {
+    assert.equal(starts, 1);
+    h.options.controls.next = async () => null;
+    return actions.shift();
+  }, close() {} };
+  h.options.request = async body => {
+    if (body.action === 'cancel') return { status: 'cancelled' };
+    if (body.action === 'start' && ++starts === 1) return { status: 'expired' };
+    return request(body);
+  };
+  await pairTerminal(h.options);
+  assert.equal(starts, 2);
 });
 
 test('installed QR renderer produces terminal output for the versioned payload', () => {

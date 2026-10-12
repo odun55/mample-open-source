@@ -1,3 +1,5 @@
+import CodeBlock from '../../../components/CodeBlock';
+import GuideContents from '../../../components/GuideContents';
 import Link from 'next/link';
 import SiteNav from '../../../components/SiteNav';
 import styles from './guide.module.css';
@@ -47,15 +49,7 @@ export default async function GuidePage(props) {
     ]
   };
 
-  return (
-    <>
-    <SiteNav lang={lang} t={t} current="guide" />
-    <div className={styles.pageWrapper}>
-      <aside className={styles.sidebar}>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(howToJsonLd) }}
-        />
+  const contents = (<>
         <div className={styles.tocSection}>
           <a href="#top" className={styles.tocMainTitle}>{t.guide_page_title}</a>
         </div>
@@ -65,7 +59,8 @@ export default async function GuidePage(props) {
         <div className={styles.tocSection}>
           <a href="#cli-tool" className={styles.tocTitle}>{t.guide_sec3_title}</a>
           <a href="#cli-setup" className={styles.tocSubItem}>{t.guide_sec3_sub1_title}</a>
-          <a href="#cli-sending" className={styles.tocSubItem}>{t.guide_sec3_sub2_title}</a>
+          <a href="#cli-sending" className={styles.tocSubItem}>{t.guide_test_direct_title}</a>
+          <a href="#cli-command-completion" className={styles.tocSubItem}>{t.guide_usage_title}</a>
           <a href="#cli-troubleshooting" className={styles.tocSubItem}>{t.guide_troubleshooting_title}</a>
           <a href="#cli-disconnect" className={styles.tocSubItem}>{t.guide_sec3_sub3_title}</a>
           <a href="#cli-uninstall" className={styles.tocSubItem}>{t.guide_sec3_sub4_title}</a>
@@ -76,7 +71,6 @@ export default async function GuidePage(props) {
           <a href="#ai-agents" className={styles.tocTitle}>{t.guide_sec4_title}</a>
           <a href="#ai-setup" className={styles.tocSubItem}>{t.guide_sec4_sub1_title}</a>
           <a href="#ai-instructions" className={styles.tocSubItem}>{t.guide_sec4_sub2_title}</a>
-          <a href="#ai-first-use" className={styles.tocSubItem}>{t.guide_sec4_sub3_title || 'İlk Kullanımda Dikkat Edilmesi Gerekenler'}</a>
           {t.guide_sec4_sub4_title && (
             <a href="#ai-disable-prompts" className={styles.tocSubItem}>{t.guide_sec4_sub4_title}</a>
           )}
@@ -89,9 +83,22 @@ export default async function GuidePage(props) {
           <a href="#detail-cloud" className={styles.tocSubItem}>{t.guide_sec0_li4_title}</a>
           <a href="#detail-free" className={styles.tocSubItem}>{t.guide_sec0_li5_title}</a>
         </div>
+  </>);
+
+  return (
+    <>
+    <SiteNav lang={lang} t={t} current="guide" />
+    <div className={styles.pageWrapper}>
+      <aside className={styles.sidebar}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(howToJsonLd) }}
+        />
+        {contents}
       </aside>
 
       <main className={styles.container}>
+      <GuideContents lang={lang}>{contents}</GuideContents>
       {/* SETUP GUIDE HEADER */}
       <header className={styles.header} id="top">
         <h1 className={styles.title}>{t.guide_page_title}</h1>
@@ -104,28 +111,35 @@ export default async function GuidePage(props) {
         <div className={styles.subSection} id="cli-setup">
           <h3 className={styles.subSectionTitle}>{t.guide_sec3_sub1_title}</h3>
           <p className={styles.subSectionDesc} dangerouslySetInnerHTML={{ __html: t.guide_sec3_sub1_desc }} />
-          <div className={styles.codeBlock}>npm install -g mample</div>
+          <CodeBlock lang={lang}>npm install -g mample</CodeBlock>
           <p className={styles.subSectionDesc} style={{ marginTop: '16px' }} dangerouslySetInnerHTML={{ __html: t.guide_sec3_sub1_desc2 }} />
           <h4 className={styles.cardTitle}>{t.guide_sec3_qr_title}</h4>
           <p className={styles.subSectionDesc}>{t.guide_sec3_qr_desc}</p>
-          <div className={styles.codeBlock}><code>mample auth --qr</code></div>
+          <CodeBlock lang={lang}>mample auth qr</CodeBlock>
           <h4 className={styles.cardTitle}>{t.guide_sec3_key_title}</h4>
           <p className={styles.subSectionDesc}>{t.guide_sec3_key_desc}</p>
-          <div className={styles.codeBlock}>mample auth <b>&quot;your-secret-key&quot;</b></div>
-          <p className={styles.subSectionDesc}>{t.guide_sec3_pairing_note}</p>
+          <CodeBlock lang={lang}>mample auth <b>&quot;your-secret-key&quot;</b></CodeBlock>
         </div>
 
         <div className={styles.subSection} id="cli-sending">
-          <h3 className={styles.subSectionTitle}>{t.guide_sec3_sub2_title}</h3>
-          <p className={styles.subSectionDesc} dangerouslySetInnerHTML={{ __html: t.guide_sec3_sub2_desc }} />
-          <div className={styles.codeBlock} dangerouslySetInnerHTML={{ __html: t.guide_sec3_code_python || '<span style=\"color: #A1A1AA;\">python script.py</span> &amp;&amp; mample \"Process completed\"' }} />
+          <h3 className={styles.subSectionTitle}>{t.guide_test_direct_title}</h3>
+          <p className={styles.subSectionDesc}>{t.guide_sec3_sub2_desc}</p>
+          <p className={styles.subSectionDesc}>{t.guide_test_direct_desc}</p>
+          <CodeBlock lang={lang}>{t.guide_test_direct_command}</CodeBlock>
+          <p className={styles.subSectionDesc}>{t.guide_test_direct_result}</p>
         </div>
 
-        <div className={styles.subSection}>
-          <h3 className={styles.subSectionTitle}>{t.guide_sec3_powershell_title}</h3>
-          <div className={styles.codeBlock}>
-            <span style={{ color: '#A1A1AA' }}>{'python script.py; if ($LASTEXITCODE -eq 0) { '}<span style={{ color: '#FFFFFF' }}>{'mample "Task completed"'}</span>{' }'}</span>
-          </div>
+        <div className={styles.subSection} id="cli-command-completion">
+          <h3 className={styles.subSectionTitle}>{t.guide_usage_title}</h3>
+          <p className={styles.subSectionDesc}>{t.guide_usage_desc}</p>
+          <h4 className={styles.cardTitle}>{t.guide_sec3_powershell_title}</h4>
+          <p className={styles.subSectionDesc}>{t.guide_test_powershell_desc}</p>
+          <CodeBlock lang={lang} task="Start-Sleep -Seconds 5" suffix={t.guide_usage_powershell_suffix} />
+          <h4 className={styles.cardTitle}>{t.guide_test_cmd_title}</h4>
+          <p className={styles.subSectionDesc}>{t.guide_test_cmd_desc}</p>
+          <CodeBlock lang={lang} task="timeout /t 5 /nobreak >nul" suffix={t.guide_usage_cmd_suffix} />
+          <h4 className={styles.cardTitle}>{t.guide_test_unix_title}</h4>
+          <CodeBlock lang={lang} task="sleep 5" suffix={t.guide_usage_unix_suffix} />
         </div>
 
         <div className={styles.subSection} id="cli-troubleshooting">
@@ -136,20 +150,20 @@ export default async function GuidePage(props) {
 
         <div className={styles.subSection} id="cli-disconnect">
           <h3 className={styles.subSectionTitle}>{t.guide_sec3_sub3_title}</h3>
-          <div className={styles.codeBlock}>mample disconnect</div>
+          <CodeBlock lang={lang}>mample disconnect</CodeBlock>
           <p className={styles.subSectionDesc} dangerouslySetInnerHTML={{ __html: t.guide_sec3_sub3_desc }} />
         </div>
         
         <div className={styles.subSection} id="cli-uninstall">
           <h3 className={styles.subSectionTitle}>{t.guide_sec3_sub4_title}</h3>
           <p className={styles.subSectionDesc}>{t.guide_sec3_sub4_desc}</p>
-          <div className={styles.codeBlock}>npm uninstall -g mample</div>
+          <CodeBlock lang={lang}>npm uninstall -g mample</CodeBlock>
         </div>
         
         <div className={styles.subSection} id="cli-help">
           <h3 className={styles.subSectionTitle}>{t.guide_sec3_sub5_title}</h3>
           <p className={styles.subSectionDesc}>{t.guide_sec3_sub5_desc}</p>
-          <div className={styles.codeBlock}>mample --help</div>
+          <CodeBlock lang={lang}>mample help</CodeBlock>
         </div>
       </section>
 
@@ -160,6 +174,7 @@ export default async function GuidePage(props) {
         <div className={styles.subSection} id="ai-setup">
           <h3 className={styles.subSectionTitle}>{t.guide_sec4_sub1_title}</h3>
           <p className={styles.subSectionDesc} dangerouslySetInnerHTML={{ __html: t.guide_sec4_sub1_desc }} />
+          <p className={styles.subSectionDesc}><strong>{t.guide_ai_requirements_label}</strong> {t.guide_ai_requirements_note}</p>
         </div>
 
         <div className={styles.subSection} id="ai-instructions">
@@ -167,14 +182,6 @@ export default async function GuidePage(props) {
           <p className={styles.subSectionDesc} dangerouslySetInnerHTML={{ __html: t.guide_sec4_sub2_desc }} />
         </div>
 
-        <div className={styles.subSection} id="ai-first-use">
-          <h3 className={styles.subSectionTitle}>{t.guide_sec4_sub3_title || 'İlk Kullanımda Dikkat Edilmesi Gerekenler'}</h3>
-          <p className={styles.subSectionDesc}>{t.guide_sec4_sub3_desc}</p>
-          
-          {t.guide_sec4_sub3_desc2 ? (
-            <p className={styles.subSectionDesc} dangerouslySetInnerHTML={{ __html: t.guide_sec4_sub3_desc2 }}></p>
-          ) : null}
-        </div>
         
         {t.guide_sec4_sub4_title && (
           <div className={styles.subSection} id="ai-disable-prompts">

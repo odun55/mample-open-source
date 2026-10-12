@@ -28,7 +28,11 @@ async function triggerNotification(secretKey, taskName, connectionId) {
     throw new Error(errMsg);
   }
 
-  return await response.json();
+  const result = await response.json();
+  if (!result || result.success !== true) {
+    throw new Error("Notification request was not confirmed by the server.");
+  }
+  return result;
 }
 
 const REGISTER_FUNCTION_URL = "https://europe-west1-mample-fca3c.cloudfunctions.net/registerCLIConnection";

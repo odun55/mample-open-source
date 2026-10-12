@@ -5,34 +5,47 @@ import styles from './HeroTitle.module.css';
 
 export default function HeroTitle({ lang }) {
   const [index, setIndex] = useState(0);
+  const [hasRotated, setHasRotated] = useState(false);
 
   const words = lang === 'tr'
-    ? ['Terminal Görevlerin', 'Yapay Zekâ Görevlerin', 'Derlemelerin']
-    : ['Terminal Tasks', 'AI Tasks', 'Builds'];
+    ? ['Derlemelerin', 'Yapay Zekâ Görevlerin', 'Terminal Görevlerin']
+    : ['Builds', 'AI Tasks', 'Terminal Tasks'];
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setIndex((prev) => (prev + 1) % words.length);
-    }, 1500); // 1.5 seconds per word
-    return () => clearInterval(interval);
+    const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const mobile = window.matchMedia('(max-width: 900px)');
+    let interval;
+    const update = () => {
+      clearInterval(interval);
+      // Mobile keeps the phrases rotating; CSS removes movement when requested.
+      if (document.hidden || (motion.matches && !mobile.matches)) return;
+      interval = setInterval(() => {
+        setHasRotated(true);
+        setIndex((prev) => (prev + 1) % words.length);
+      }, 2500);
+    };
+    update();
+    document.addEventListener('visibilitychange', update);
+    motion.addEventListener('change', update);
+    mobile.addEventListener('change', update);
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener('visibilitychange', update);
+      motion.removeEventListener('change', update);
+      mobile.removeEventListener('change', update);
+    };
   }, [words.length]);
 
   return (
-    <h1>
-      {lang === 'en' && 'Get Notified When Your '}
-      <span 
-        className={styles.wrapper} 
-        style={{ 
-          textAlign: lang === 'tr' ? 'center' : 'left',
-          justifyItems: lang === 'tr' ? 'center' : 'start'
-        }}
-      >
+    <h1 className={styles.title}>
+      {lang === 'en' && <>Know When Your<br /></>}
+      <span className={styles.wrapper}>
         {words.map((word, i) => {
           const isCurrent = i === index;
-          const isPrevious = i === (index - 1 + words.length) % words.length;
+          const isPrevious = hasRotated && i === (index - 1 + words.length) % words.length;
 
           let className = styles.hiddenWord;
-          if (isCurrent) className = styles.word;
+          if (isCurrent) className = hasRotated ? styles.word : styles.initialWord;
           else if (isPrevious) className = styles.wordOut;
 
           return (
@@ -46,7 +59,8 @@ export default function HeroTitle({ lang }) {
           );
         })}
       </span>
-      {lang === 'en' ? ' Finish' : ' Bittiğinde Bildirim Al'}
+      <br />
+      {lang === 'en' ? 'Are Done.' : 'Bittiğinde Haberin Olsun.'}
     </h1>
   );
 }

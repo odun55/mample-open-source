@@ -1,0 +1,8 @@
+.contents { display: none; }
+@media (max-width: 900px) {
+  .contents { display: block; margin-bottom: 28px; border: 1px solid rgba(136,212,158,.2); border-radius: 12px; background: #191d1b; }
+  .contents > summary { padding: 16px 20px; cursor: pointer; color: var(--primary); font-weight: 600; }
+  .contents > summary:focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; }
+  .contents nav { display: flex; flex-direction: column; gap: 24px; padding: 20px; max-height: 55svh; overflow-y: auto; border-top: 1px solid rgba(136,212,158,.12); }
+  .contents nav a { padding-block: 5px; }
+}

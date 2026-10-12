@@ -88,7 +88,7 @@ exports.triggerNotification = onRequest(
         return res.status(403).json({ error: "Bildirim gönderimi devre dışı." });
       }
 
-      const limit = await checkRateLimits(db, userId, rateLimitKey);
+      const limit = await checkRateLimits(db, userId, rateLimitKey, Date.now, userId);
       if (!limit.allowed) {
         res.set("Retry-After", String(limit.retryAfter));
         return res.status(429).json({ error: "Çok fazla istek", retry_after: limit.retryAfter });
@@ -109,14 +109,22 @@ exports.triggerNotification = onRequest(
       }
 
       try {
-        await db.collection("pending_notifications").add({
+        const queued = await db.runTransaction(async (tx) => {
+          const current = await tx.get(db.collection("users").doc(userId));
+          if (!current.exists || current.data().notifications_disabled === true ||
+              current.data().fcm_token !== fcmToken ||
+              (cli_secret_key && current.data().cli_secret_key_hash !== hashValue(cli_secret_key))) return false;
+          tx.create(db.collection("pending_notifications").doc(), {
           userId: userId,
           fcmToken: fcmToken,
           title: finalTitle,
           body: finalBody,
           status: "pending",
           createdAt: FieldValue.serverTimestamp()
+          });
+          return true;
         });
+        if (!queued) return res.status(401).json({ error: "Account or connection is no longer active" });
       } catch (dbError) {
         throw dbError;
       }

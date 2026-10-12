@@ -7,4 +7,20 @@
 .supportLink { padding: 8px 14px; border: 1px solid rgba(255,255,255,.18); border-radius: 7px; transition: border-color .2s, background-color .2s; }
 .supportLink:hover { border-color: var(--primary); background: rgba(136,212,158,.06); }
 .supportLink:focus-visible { outline: 2px solid var(--primary); outline-offset: 4px; }
-@media (max-width: 640px) { .navbar { padding: 14px 20px; flex-wrap: wrap; } .links { width: 100%; justify-content: space-between; gap: 10px; font-size: 12px; } .languages { padding-left: 10px; } .brand { font-size: 20px; } }
+@media (max-width: 640px) {
+  .navbar { padding: 12px; gap: 10px; flex-wrap: nowrap; }
+  .brand { flex-shrink: 0; gap: 6px; font-size: 16px; }
+  .brand img { width: 24px; height: 24px; border-radius: 7px; }
+  .links { width: auto; gap: 10px; font-size: 12px; white-space: nowrap; }
+  .links a { display: flex; align-items: center; min-height: 36px; }
+  .supportLink { padding: 6px 8px; }
+  .languages { gap: 6px; padding-left: 8px; font-size: 10px; }
+}
+@media (max-width: 360px) {
+  .navbar { padding-inline: 10px; gap: 8px; }
+  .brand { gap: 5px; font-size: 15px; }
+  .brand img { width: 22px; height: 22px; }
+  .links { gap: 7px; font-size: 11px; }
+  .supportLink { padding-inline: 6px; }
+  .languages { gap: 5px; padding-left: 6px; }
+}

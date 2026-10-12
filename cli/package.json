@@ -1,6 +1,6 @@
 {
   "name": "mample",
-  "version": "1.0.2",
+  "version": "1.0.6",
   "description": "Send notifications to your Android phone from terminal commands and AI coding workflows.",
   "keywords": [
     "push notification",
@@ -27,7 +27,7 @@
     "url": "git+https://github.com/odun55/mample-open-source.git",
     "directory": "cli"
   },
-  "homepage": "https://mample.vercel.app",
+  "homepage": "https://mample.app",
   "bugs": {
     "url": "https://github.com/odun55/mample-open-source/issues"
   },

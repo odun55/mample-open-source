@@ -37,5 +37,16 @@ async function request(method, path, fields, identity, expected) {
   await request("PATCH", "connections/terminal?updateMask.fieldPaths=platform", { platform: { stringValue: "My PC" } }, "alice", 200);
   await request("DELETE", "connections/terminal", null, "bob", 403);
   await request("DELETE", "connections/terminal", null, "alice", 200);
-  console.log("15 Firestore emulator checks passed: ownership, moderation, settings, server-only data and connections.");
+  await request("PATCH", "account_deletion_guards/alice", {
+    cleanup_at: { timestampValue: new Date(Date.now() + 86400000).toISOString() },
+  }, "admin", 200);
+  await request("PATCH", "users/alice?updateMask.fieldPaths=fcm_token", { fcm_token: { stringValue: "recreated" } }, "alice", 403);
+  await request("PATCH", "connections/after-delete", { uid: { stringValue: "alice" },
+    created_at: { timestampValue: new Date().toISOString() },
+    expires_at: { timestampValue: new Date(Date.now() + 3600000).toISOString() } }, "alice", 403);
+  await request("GET", "account_deletion_guards/alice", null, "alice", 403);
+  await request("DELETE", "account_deletion_guards/alice", null, "alice", 403);
+  await request("DELETE", "users/alice", null, "admin", 200);
+  await request("PATCH", "users/alice", { fcm_token: { stringValue: "recreated" } }, "alice", 403);
+  console.log("22 Firestore emulator checks passed: ownership, moderation, deletion guards and server-only data.");
 })().catch(error => { console.error(error); process.exitCode = 1; });

@@ -1,6 +1,7 @@
 import SiteNav from '../../../components/SiteNav';
 import { getDictionary } from '../../../getDictionary';
 import styles from '../guide/guide.module.css';
+import { siteUrl } from '../../../lib/siteUrl';
 
 
 export async function generateMetadata(props) {
@@ -34,13 +35,13 @@ export default async function Terms({ params }) {
         '@type': 'ListItem',
         position: 1,
         name: 'Home',
-        item: `https://mample.vercel.app/${lang}`
+        item: `${siteUrl}/${lang}`
       },
       {
         '@type': 'ListItem',
         position: 2,
         name: t.terms_page_title || 'Terms of Service',
-        item: `https://mample.vercel.app/${lang}/terms`
+        item: `${siteUrl}/${lang}/terms`
       }
     ]
   };

@@ -1,8 +1,10 @@
+import { siteUrl } from '../lib/siteUrl';
+
 export default function sitemap() {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://mample.vercel.app';
+  const baseUrl = siteUrl;
   
   const locales = ['en', 'tr'];
-  const routes = ['', '/privacy', '/terms', '/guide', '/extension'];
+  const routes = ['', '/privacy', '/terms', '/guide', '/extension', '/delete-account'];
 
   const sitemapEntries = [];
 

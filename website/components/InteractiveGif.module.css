@@ -15,16 +15,29 @@
 .textContent h3 { color: #fff; font-size: 1.5rem; margin-bottom: 8px; }
 .activeText h3 { color: #88d49e; }
 .textContent p { color: #a1a1aa; font-size: .95rem; line-height: 1.5; }
+.textContent p a { color: #88d49e; text-decoration: underline; text-underline-offset: 3px; }
+.textContent p a:hover { color: #b9efc8; }
+.textContent p a:focus-visible { outline: 2px solid #88d49e; outline-offset: 3px; }
 .activeText p { color: #d4d4d8; }
 .progressBar { position: absolute; bottom: 0; left: 0; height: 3px; background: #88d49e; }
 .dots { display: flex; gap: 12px; margin-top: 24px; }
 .dot { width: 10px; height: 10px; border-radius: 50%; border: none; padding: 0; background: rgba(255,255,255,.2); cursor: pointer; transition: background-color .2s, transform .2s; }
 .dot:hover { background: rgba(255,255,255,.5); }
 .activeDot { background: #88d49e; transform: scale(1.3); }
+.videoToggle { display: block; padding: 0; color: #fff; font: inherit; cursor: pointer; }
+.videoToggle:disabled { cursor: default; }
+.videoToggle:focus-visible { outline: 2px solid #88d49e; outline-offset: 4px; }
+.terminalMedia { object-fit: contain; }
+.demoPlaceholder { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; padding: 24px; color: #88d49e; font-size: 1.5rem; }
+.demoPlaceholder small { color: #a1a1aa; font-size: .9rem; }
+.playbackHint { position: absolute; right: 12px; bottom: 12px; padding: 6px 10px; border-radius: 6px; background: rgba(0,0,0,.8); font-size: .8rem; }
+.staticCard { cursor: default; border-color: rgba(255,255,255,.08); }
+.staticCard:not(.activeText):hover { background: transparent; }
 @media (max-width: 900px) {
  .wrapper { flex-direction: column; gap: 32px; }
  .textContainer { width: 100%; gap: 8px; }
  .textContent:not(.activeText) p { display: none; }
+ .textContent.staticCard p { display: block; }
  .gifWrapper { flex: auto; }
  .container { height: 300px; }
 }

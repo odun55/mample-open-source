@@ -65,8 +65,17 @@ test('successful manual auth discards pending QR recovery from another attempt',
   assert.equal(state.pending_qr, null);
 });
 
-test('auth routes explicit QR and no-key usage to pairing; manual keys to shared auth', async () => {
-  for (const args of [[], ['--qr'], ['phone-secret'], ['phone-secret', '--qr']]) {
+test('auth routes qr, legacy --qr and no-key usage to pairing; manual keys to shared auth', async () => {
+  for (const [args, expectedCalls] of [
+    [[], ['QR']],
+    [['qr'], ['QR']],
+    [['--qr'], ['QR']],
+    [['qr', '--qr'], ['QR']],
+    [['phone-secret'], ['phone-secret']],
+    [['m-qr123'], ['m-qr123']],
+    [['phone-secret', '--qr'], []],
+    [['--qr', 'phone-secret'], []],
+  ]) {
     const { Command } = require('commander');
     const program = new Command();
     const parse = program.parseAsync.bind(program);
@@ -77,6 +86,7 @@ test('auth routes explicit QR and no-key usage to pairing; manual keys to shared
       process: { argv: ['node', 'mample', 'auth', ...args], exit: () => { throw new Error('invalid options'); } },
       require(name) {
         if (name === 'commander') return { program };
+        if (name === '../package.json') return require('../package.json');
         if (name === '../lib/config') return {};
         if (name === '../lib/notify') return {};
         if (name === '../lib/disconnect') return {};
@@ -87,6 +97,6 @@ test('auth routes explicit QR and no-key usage to pairing; manual keys to shared
     };
     vm.runInNewContext(fs.readFileSync(require.resolve('../bin/mample'), 'utf8'), sandbox);
     await finished.catch(() => {});
-    assert.deepEqual(calls, args.length === 2 ? [] : args[0] === 'phone-secret' ? ['phone-secret'] : ['QR']);
+    assert.deepEqual(calls, expectedCalls);
   }
 });

@@ -1,5 +1,6 @@
 .pageWrapper {
   display: flex;
+  width: 100%;
   max-width: 1200px;
   margin: 0 auto;
   align-items: flex-start;
@@ -138,6 +139,12 @@
   margin-bottom: 40px;
 }
 
+.header,
+.section,
+.subSection {
+  scroll-margin-top: 128px;
+}
+
 .subSectionTitle {
   font-size: 1.5rem;
   font-weight: 600;
@@ -150,6 +157,25 @@
   line-height: 1.6;
   color: var(--text-muted);
   margin-bottom: 16px;
+}
+
+.subSectionDesc a {
+  color: var(--primary);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.subSectionDesc a:hover {
+  color: var(--primary-hover);
+}
+
+.subSectionDesc a:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 4px;
+  border-radius: 2px;
 }
 
 .alertBox {

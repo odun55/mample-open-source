@@ -17,6 +17,17 @@ exports.sendPendingNotification = onDocumentCreated(
     const data = snapshot.data();
     const { userId, fcmToken, title, body } = data;
 
+    // A created-event snapshot can outlive its queue record or account.
+    const db = getFirestore();
+    const [pending, user] = await Promise.all([
+      snapshot.ref.get(), db.collection("users").doc(userId).get(),
+    ]);
+    if (!pending.exists || !user.exists || user.data().notifications_disabled === true ||
+        user.data().fcm_token !== fcmToken) {
+      await snapshot.ref.delete();
+      return;
+    }
+
     if (!fcmToken) {
       console.error("FCM Token eksik, bildirim gönderilemiyor.");
       return;

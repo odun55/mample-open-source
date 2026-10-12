@@ -1,19 +1,21 @@
 # Mample
 
-Mample is a free Android mobile app and terminal CLI workflow for notifications when builds, scripts and AI coding tasks finish. Pair compatible mobile and CLI builds with mample auth --qr or manual Secret Key entry. No email/password registration is required; Firebase creates an anonymous session.
+Mample is a free, open-source notification app for your terminal and AI workflows. Send updates to your Android phone when builds, scripts and AI coding tasks finish. Pair compatible mobile and CLI builds with mample auth qr or manual Secret Key entry. No email/password registration is required; Firebase creates an anonymous session.
 
 ## Current scope
 - No monthly notification quota, premium tier or subscription.
 - Short-term request limits protect against spam.
 - Terminal QR pairing is implemented in source: a single-use 90-second invitation leads to a connection without automatic expiry. Compatible mobile, CLI and backend releases are required; source implementation does not imply public package availability.
-- Public mobile availability is shown in the website's release section.
+- The homepage has an official Google Play badge that is inactive until a real store listing is configured. A badge does not establish store publication.
 - Browser extensions and browser download notifications are in development; existing code and demos are preserved on the separate extension page.
-- Notification messages are temporarily queued in Firebase. The most recent 50 history entries are stored locally on the phone.
+- Notification messages are temporarily queued in Firebase. The most recent 200 history entries are stored locally on the phone.
+- Optional financial support helps development and server costs; it does not unlock features or usage privileges. The site uses a yellow Support Mample link, with no embedded payment widget.
 
 ## Links
 - [Source repository](https://github.com/odun55/mample-open-source)
-- [Homepage](https://mample.vercel.app/en)
-- [Mobile & CLI guide](https://mample.vercel.app/en/guide)
-- [Browser extension](https://mample.vercel.app/en/extension)
-- [Privacy policy](https://mample.vercel.app/en/privacy)
-- [Terms of use](https://mample.vercel.app/en/terms)
+- [Homepage](https://mample.app/en)
+- [Mobile & CLI guide](https://mample.app/en/guide)
+- [Mample Extension](https://mample.app/en/extension)
+- [Privacy policy](https://mample.app/en/privacy)
+- [Terms of use](https://mample.app/en/terms)
+- [Support Mample](https://buymeacoffee.com/mample)

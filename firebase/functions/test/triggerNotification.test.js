@@ -3,13 +3,16 @@ const assert = require("node:assert/strict");
 const vm = require("node:vm");
 const fs = require("node:fs");
 
-function harness({ disabled = false, allowed = true } = {}) {
+function harness({ disabled = false, allowed = true, deletingAtQueue = false } = {}) {
   const calls = { queued: [], limits: [], checked: 0, reads: 0 };
   const user = { id: "alice", exists: true, data: () => ({
     fcm_token: "token", notifications_disabled: disabled,
     cli_secret_key_hash: require("node:crypto").createHash("sha256").update("secret").digest("hex"),
   }) };
-  const db = { collection: (name) => ({
+  const db = { runTransaction: async (callback) => callback({
+    get: async () => deletingAtQueue ? { exists: false } : user,
+    create: (_ref, data) => calls.queued.push(data),
+  }), collection: (name) => ({
     doc: () => ({ get: async () => {
       calls.reads++;
       return name === "users" ? user :
@@ -55,6 +58,12 @@ test("CLI and extension requests use the same owner's limiter before queueing", 
   assert.equal(calls.queued.length, 2);
   assert.equal(calls.limits[0][0], "alice");
   assert.equal(calls.limits[1][0], "alice");
+});
+
+test("deletion between authentication and queue commit prevents notification creation", async () => {
+  const { calls, send } = harness({ deletingAtQueue: true });
+  assert.equal((await send({ cli_secret_key: "secret" })).code, 401);
+  assert.equal(calls.queued.length, 0);
 });
 
 test("adding a CLI key cannot bypass App Check for a connection", async () => {

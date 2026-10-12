@@ -1,15 +1,3 @@
-# Mample notification instructions
+# Mample
 
-After completing a task, send a brief notification with the globally installed
-CLI, within the terminal permissions already granted for this project:
-
-```bash
-mample "Task completed"
-```
-
-The CLI must be installed and paired first. Do not put secrets or private
-project content in the message. Prefer the global command instead of a local
-script path so the command is consistent. These instructions do not grant
-permissions or bypass assistant, editor, sandbox or operating-system policies.
-If execution needs approval, follow the environment's normal approval process.
-If notification sending fails, report it; do not claim successful delivery.
+When a task is complete or you need input from the user, send a mobile notification using the installed and paired Mample CLI. Run `mample "A brief status message"` with the message in double quotes, or `mample ""` for the default message set in the mobile app. Use the granted terminal permissions; if sending is blocked or fails, tell the user. Do not include secrets in the message.

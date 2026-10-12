@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
+import 'diagnostics_service.dart';
+import 'notification_history_store.dart';
+import 'dart:math';
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter/foundation.dart' show kIsWeb, debugPrint;
@@ -17,10 +19,14 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // Android'de kilit ekranını uyandırmak için local notification (fullScreenIntent ile)
   if (message.notification == null && message.data.containsKey('title')) {
     final backgroundPlugin = FlutterLocalNotificationsPlugin();
-    const initializationSettingsAndroid = AndroidInitializationSettings('@drawable/ic_notification');
-    const initializationSettings = InitializationSettings(android: initializationSettingsAndroid);
+    const initializationSettingsAndroid = AndroidInitializationSettings(
+      '@drawable/ic_notification',
+    );
+    const initializationSettings = InitializationSettings(
+      android: initializationSettingsAndroid,
+    );
     await backgroundPlugin.initialize(settings: initializationSettings);
-    
+
     await backgroundPlugin.show(
       id: message.hashCode,
       title: message.data['title'],
@@ -49,7 +55,8 @@ class FCMService {
   FirebaseMessaging? _messaging;
   FirebaseAuth? _auth;
   FirebaseFirestore? _firestore;
-  final FlutterLocalNotificationsPlugin _localNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin _localNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
 
   static const AndroidNotificationChannel _channel = AndroidNotificationChannel(
     'mample_notifications_v1',
@@ -61,95 +68,139 @@ class FCMService {
   Future<void> _initQueue = Future<void>.value();
   StreamSubscription<String>? _tokenSubscription;
   StreamSubscription<RemoteMessage>? _messageSubscription;
+  Future<void>? _localReady;
+  bool _suspended = false;
 
-  Future<void> init() {
-    return _enqueue(_initialize);
+  Future<void> suspendForDeletion() => _enqueue(() async {
+    _suspended = true;
+    await NotificationHistoryStore.instance.setReceivingEnabled(false);
+    await _localNotificationsPlugin.cancelAll();
+  });
+
+  Future<void> resumeAfterDeletion() async {
+    await NotificationHistoryStore.instance.setReceivingEnabled(true);
+    _suspended = false;
+  }
+
+  Future<void> deleteDeviceToken() async {
+    if (!kIsWeb) await FirebaseMessaging.instance.deleteToken();
+  }
+
+  Future<void> init({String? secretKey}) {
+    return _enqueue(() => _initialize(secretKey));
   }
 
   Future<void> _enqueue(Future<void> Function() operation) {
     final pending = _initQueue.then((_) => operation());
-    _initQueue = pending.then<void>((_) {}, onError: (Object error, StackTrace stack) {});
+    _initQueue = pending.then<void>(
+      (_) {},
+      onError: (Object error, StackTrace stack) {},
+    );
     return pending;
   }
 
-  Future<void> _initialize() async {
+  Future<void> _initialize(String? secretKey) async {
+    if (_suspended) return;
     if (kIsWeb) return;
     _messaging = FirebaseMessaging.instance;
     _auth = FirebaseAuth.instance;
     _firestore = FirebaseFirestore.instance;
 
-    // 1. Bildirim İzinlerini İste (FCM)
-    await _messaging!.requestPermission(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
+    // Install foreground handling before any authentication or server write.
+    // Local plugin/channel setup is performed once, including key rotations.
+    await (_localReady ??= _prepareLocalNotifications().catchError((
+      Object error,
+      StackTrace stack,
+    ) {
+      _localReady = null;
+      Error.throwWithStackTrace(error, stack);
+    }));
+    const secureStorage = FlutterSecureStorage();
+    secretKey ??= await secureStorage.read(key: 'cli_secret_key');
+    if (secretKey == null) return;
+    final hashedKey = sha256.convert(utf8.encode(secretKey)).toString();
 
+    String? token;
+    await Future.wait<void>([
+      () async {
+        if (_auth!.currentUser == null) await _auth!.signInAnonymously();
+      }(),
+      () async {
+        await _messaging!.requestPermission(
+          alert: true,
+          badge: true,
+          sound: true,
+        );
+        token = await _messaging!.getToken();
+      }(),
+    ]);
+    final uid = _auth!.currentUser?.uid;
+    if (uid == null) throw StateError('Notification session is unavailable');
+    if (token == null) throw StateError('Notification token is unavailable');
+    await _updateUserRecord(uid, token!, hashedKey);
+  }
+
+  Future<void> _prepareLocalNotifications() async {
     // Yerel Bildirim Eklentisini Başlat
     await _localNotificationsPlugin
-        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >()
         ?.createNotificationChannel(_channel);
 
-    const initializationSettingsAndroid = AndroidInitializationSettings('@drawable/ic_stat_mample');
-    const initializationSettings = InitializationSettings(android: initializationSettingsAndroid);
-    await _localNotificationsPlugin.initialize(settings: initializationSettings);
+    const initializationSettingsAndroid = AndroidInitializationSettings(
+      '@drawable/ic_stat_mample',
+    );
+    const initializationSettings = InitializationSettings(
+      android: initializationSettingsAndroid,
+    );
+    await _localNotificationsPlugin.initialize(
+      settings: initializationSettings,
+    );
 
     // iOS için ön planda bildirim ayarı (Android'de local notification kullanıyoruz)
-    await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
+    await FirebaseMessaging.instance
+        .setForegroundNotificationPresentationOptions(
+          alert: true,
+          badge: true,
+          sound: true,
+        );
 
     // Arka plan bildirim dinleyicisini ayarla
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-    // 2. Gizli Anahtarı Al ve Hashle
     const secureStorage = FlutterSecureStorage();
-    String? secretKey = await secureStorage.read(key: 'cli_secret_key');
-    if (secretKey == null) return;
-    
-    final bytes = utf8.encode(secretKey);
-    final hashedKey = sha256.convert(bytes).toString();
-
-    // 3. Anonim Giriş Yap
-    if (_auth!.currentUser == null) {
-      await _auth!.signInAnonymously();
-    }
-    
-    final uid = _auth!.currentUser?.uid;
-    if (uid == null) return;
-
-    // 4. FCM Token Al ve Kaydet
-    String? token = await _messaging!.getToken();
-    if (token != null) {
-      await _updateUserRecord(uid, token, hashedKey);
-    }
 
     _tokenSubscription ??= _messaging!.onTokenRefresh.listen((newToken) async {
       try {
         await _enqueue(() async {
-        final currentUid = _auth!.currentUser?.uid;
-        final currentKey = await secureStorage.read(key: 'cli_secret_key');
-        if (currentUid == null || currentKey == null) return;
-        final currentHash = sha256.convert(utf8.encode(currentKey)).toString();
-        await _updateUserRecord(currentUid, newToken, currentHash);
+          if (_suspended) return;
+          final currentUid = _auth!.currentUser?.uid;
+          final currentKey = await secureStorage.read(key: 'cli_secret_key');
+          if (currentUid == null || currentKey == null) return;
+          final currentHash = sha256
+              .convert(utf8.encode(currentKey))
+              .toString();
+          await _updateUserRecord(currentUid, newToken, currentHash);
         });
-      } catch (error) {
+      } catch (error, stack) {
+        DiagnosticsService.record('FCM token update', error, stack);
         debugPrint('FCM token update failed: $error');
       }
     });
 
     // 5. Uygulama Açıkken Gelen Bildirimleri Dinle ve Göster
-    _messageSubscription ??= FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+    _messageSubscription ??= FirebaseMessaging.onMessage.listen((
+      RemoteMessage message,
+    ) async {
       bool saved = await saveNotification(message);
       if (!saved) return;
-      
+
       final title = message.notification?.title ?? message.data['title'];
       final body = message.notification?.body ?? message.data['body'];
 
       // Uygulama ön plandayken bildirimi yerel olarak göster
-      if (title != null) {
+      if (title != null && !_suspended) {
         await _localNotificationsPlugin.show(
           id: message.hashCode,
           title: title,
@@ -171,7 +222,11 @@ class FCMService {
     });
   }
 
-  Future<void> _updateUserRecord(String uid, String token, String hashedKey) async {
+  Future<void> _updateUserRecord(
+    String uid,
+    String token,
+    String hashedKey,
+  ) async {
     if (_firestore == null) return;
     await _firestore!.collection('users').doc(uid).set({
       'fcm_token': token,
@@ -180,53 +235,23 @@ class FCMService {
     }, SetOptions(merge: true));
   }
 
-  static Future<void> _saveQueue = Future<void>.value();
-
-  static Future<bool> saveNotification(RemoteMessage message) {
-    final result = _saveQueue.then((_) => _saveNotification(message));
-    _saveQueue = result.then<void>((_) {}, onError: (Object error, StackTrace stack) {});
-    return result;
-  }
-
-  static Future<bool> _saveNotification(RemoteMessage message) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.reload();
-    
-    List<String> notifications = prefs.getStringList('mample_notifications') ?? [];
-    
+  static Future<bool> saveNotification(RemoteMessage message) async {
     final title = message.notification?.title ?? message.data['title'];
     final body = message.notification?.body ?? message.data['body'];
-    
+
     if (title == null && body == null) return true;
 
-    if (message.messageId != null && notifications.any((encoded) {
-      try {
-        return jsonDecode(encoded)['id'] == message.messageId;
-      } catch (_) {
-        return false;
-      }
-    })) {
-      return false;
-    }
-
+    final receivedAt = DateTime.now();
     final newNotification = {
-      'id': message.messageId ?? DateTime.now().millisecondsSinceEpoch.toString(),
+      'id':
+          message.messageId ??
+          'local-${receivedAt.microsecondsSinceEpoch}-${Random.secure().nextInt(1 << 32).toRadixString(16)}',
       'title': title ?? 'Yeni Bildirim',
       'body': body ?? '',
-      'time': DateTime.now().toIso8601String(),
+      'time': receivedAt.toIso8601String(),
       'isRead': false,
     };
-    
-    notifications.insert(0, jsonEncode(newNotification));
-    
-    // Sadece son 50 bildirimi sakla
-    if (notifications.length > 50) {
-      notifications = notifications.sublist(0, 50);
-    }
-    
-    await prefs.setStringList('mample_notifications', notifications);
-    
-    
-    return true;
+
+    return NotificationHistoryStore.instance.add(newNotification, receivedAt);
   }
 }

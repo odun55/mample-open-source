@@ -5,16 +5,16 @@ const vm = require("node:vm");
 const crypto = require("node:crypto");
 const terminalId = "00000000-0000-4000-8000-000000000001";
 
-function harness({ validKey = true, rotated = false, disabled = false, existing = [] } = {}) {
-  const hash = crypto.createHash("sha256").update("secret").digest("hex");
+function harness({ validKey = true, rotated = false, disabled = false, existing = [], secretKey = "secret" } = {}) {
+  const hash = crypto.createHash("sha256").update(secretKey).digest("hex");
   const docs = new Map(existing);
   const userRef = { id: "alice", type: "user" };
   let queries = 0, autoId = 0;
   const db = {
     collection(name) {
-      if (name === "users") return { where: () => ({ limit: () => ({ get: async () => {
+      if (name === "users") return { where: (_field, _operator, requestedHash) => ({ limit: () => ({ get: async () => {
         queries++;
-        return { empty: !validKey, docs: [{ id: "alice", ref: userRef }] };
+        return { empty: !validKey || requestedHash !== hash, docs: [{ id: "alice", ref: userRef }] };
       } }) }) };
       return { doc: (id) => ({ id: id || "auto-" + (++autoId) }) };
     },
@@ -49,6 +49,15 @@ test("retrying the same terminal after a lost response reuses one connection", a
   assert.equal(second.body.created, false);
   assert.equal(first.body.connection_id, second.body.connection_id);
   assert.equal(h.docs.size, 1);
+});
+
+test("compact and existing long Secret Keys use the same hash authentication", async () => {
+  for (const key of ['m-' + 'a'.repeat(26), 'mample-' + 'a'.repeat(64)]) {
+    const h = harness({ secretKey: key });
+    assert.equal((await h.send({ cli_secret_key: key, terminal_id: terminalId })).code, 200);
+    assert.equal((await h.send({ cli_secret_key: key.slice(0, -1) + 'b', terminal_id: terminalId })).code, 401);
+    assert.equal(h.docs.size, 1);
+  }
 });
 
 test("different installations retain separate terminal connections", async () => {

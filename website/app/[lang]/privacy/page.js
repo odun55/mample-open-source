@@ -1,6 +1,8 @@
 import SiteNav from '../../../components/SiteNav';
+import Link from 'next/link';
 import { getDictionary } from '../../../getDictionary';
 import styles from '../guide/guide.module.css';
+import { siteUrl } from '../../../lib/siteUrl';
 
 
 export async function generateMetadata(props) {
@@ -34,13 +36,13 @@ export default async function Privacy({ params }) {
         '@type': 'ListItem',
         position: 1,
         name: 'Home',
-        item: `https://mample.vercel.app/${lang}`
+        item: `${siteUrl}/${lang}`
       },
       {
         '@type': 'ListItem',
         position: 2,
         name: t.privacy_page_title || 'Privacy Policy',
-        item: `https://mample.vercel.app/${lang}/privacy`
+        item: `${siteUrl}/${lang}/privacy`
       }
     ]
   };
@@ -111,6 +113,7 @@ export default async function Privacy({ params }) {
         <section id="privacy-6" style={{ display: 'flex', flexDirection: 'column', gap: '16px', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '32px' }}>
           <h2 style={{ fontSize: '24px', fontWeight: 'bold', color: '#FFFFFF' }}>{t.privacy_6_title}</h2>
           <p style={{ color: '#A1A1AA', fontSize: '16px', lineHeight: '1.6' }}>{t.privacy_6_desc}</p>
+          <Link href={`/${lang}/delete-account`}>{t.delete_web_title}</Link>
           <a href="mailto:odun.coop@gmail.com?subject=Mample%20data%20deletion%20request" style={{ color: '#88D49E' }}>odun.coop@gmail.com</a>
         </section>
 

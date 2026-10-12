@@ -2,6 +2,9 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
+    function deletionBlocked(uid) {
+      return exists(/databases/$(database)/documents/account_deletion_guards/$(uid));
+    }
 
     // ─────────────────────────────────────────────────────────────────
     // USERS COLLECTION
@@ -17,9 +20,11 @@ service cloud.firestore {
       allow read: if request.auth != null && request.auth.uid == uid;
       allow create: if request.auth != null
                     && request.auth.uid == uid
+                    && !deletionBlocked(uid)
                     && request.resource.data.keys().hasOnly(editableFields());
       allow update: if request.auth != null
                     && request.auth.uid == uid
+                    && !deletionBlocked(uid)
                     && request.resource.data.diff(resource.data)
                          .affectedKeys().hasOnly(editableFields());
       allow delete: if false;
@@ -42,6 +47,7 @@ service cloud.firestore {
       // Kimliği doğrulanmış kullanıcı kendi bağlantısını oluşturabilir
       allow create: if request.auth != null
                     && request.resource.data.uid == request.auth.uid
+                    && !deletionBlocked(request.auth.uid)
                     && request.resource.data.keys().hasAll(['uid', 'created_at', 'expires_at'])
                     // expires_at en fazla 24 saat ilerisi olabilir
                     && request.resource.data.expires_at is timestamp
@@ -57,6 +63,7 @@ service cloud.firestore {
       // Kullanıcı kendi bağlantısını güncelleyebilir (isim değiştirme)
       allow update: if request.auth != null 
                     && resource.data.uid == request.auth.uid
+                    && !deletionBlocked(request.auth.uid)
                     && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['platform']);
     }
 

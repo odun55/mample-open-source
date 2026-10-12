@@ -54,3 +54,7 @@ a {
   text-decoration-color: var(--primary);
   color: #fff;
 }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}

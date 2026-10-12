@@ -21,3 +21,6 @@ exports.sendPendingNotification = require("./sendPendingNotification").sendPendi
 exports.disconnectCLIConnection = require("./disconnectCLIConnection").disconnectCLIConnection;
 exports.cliPairing = require("./cliPairing").cliPairing;
 exports.completeCLIPairing = require("./cliPairing").completeCLIPairing;
+exports.deleteAccount = require("./deleteAccount").deleteAccount;
+exports.resumeAccountDeletion = require("./deleteAccount").resumeAccountDeletion;
+exports.deleteAccountWithKey = require("./deleteAccount").deleteAccountWithKey;

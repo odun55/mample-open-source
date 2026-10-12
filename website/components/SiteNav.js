@@ -11,11 +11,10 @@ export default function SiteNav({ lang, t, current = '' }) {
       </Link>
       <div className={styles.links}>
         <Link href={'/' + lang + '/guide'} aria-current={current === 'guide' ? 'page' : undefined}>{t.nav_guide}</Link>
-        <Link href={'/' + lang + '/extension'} aria-current={current === 'extension' ? 'page' : undefined}>{t.nav_extension}</Link>
         <Link href={'/' + lang + '#support'} className={styles.supportLink}>{t.nav_support}</Link>
         <div className={styles.languages} aria-label={t.nav_language}>
-          <Link href={'/tr' + suffix} aria-current={lang === 'tr' ? 'true' : undefined}>TR</Link>
-          <Link href={'/en' + suffix} aria-current={lang === 'en' ? 'true' : undefined}>EN</Link>
+          <Link href={'/tr' + suffix} prefetch={false} aria-current={lang === 'tr' ? 'true' : undefined}>TR</Link>
+          <Link href={'/en' + suffix} prefetch={false} aria-current={lang === 'en' ? 'true' : undefined}>EN</Link>
         </div>
       </div>
     </nav>

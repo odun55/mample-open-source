@@ -9,22 +9,77 @@ const { disconnect } = require('../lib/disconnect');
 const { getConfig } = require('../lib/config');
 const { triggerNotification } = require('../lib/notify');
 
+function formatHelp(command) {
+  if (command.name() === 'auth') {
+    return [
+      'Connect your phone', '',
+      '  mample auth qr',
+      '    Scan the QR code with the Mample app on your phone.',
+      '    Press R for a new QR or Q to cancel.', '',
+      '  mample auth "YOUR_SECRET_KEY"',
+      '    Replace YOUR_SECRET_KEY with the Secret Key shown in the app.',
+      '    Use this if you prefer to connect without scanning a QR.', '',
+      '  mample auth',
+      '    Also opens QR pairing.', '',
+      'After connecting, try: mample "Test notification"', '',
+    ].join('\n');
+  }
+  if (command.name() === 'disconnect') {
+    return [
+      'Disconnect this terminal', '',
+      '  mample disconnect',
+      '    Disconnects this terminal from your phone.',
+      '    Removes its saved login after the server confirms disconnection.',
+      '    Your other devices stay connected.', '',
+      'To reconnect: mample auth qr', '',
+    ].join('\n');
+  }
+  return [
+    'Mample - Send notifications to your phone', '',
+    'Connect your phone:',
+    '  mample auth qr',
+    '    Scan the QR code with the Mample app.', '',
+    'Send a notification:',
+    '  mample "Test notification"',
+    '    Put your notification message inside double quotes.',
+    '    Sends the message in quotes to your phone.', '',
+    'Use your default message:',
+    '  mample ""',
+    '    Empty quotes send the default notification message set in the app.', '',
+    'Connect without a QR:',
+    '  mample auth "YOUR_SECRET_KEY"',
+    '    Replace YOUR_SECRET_KEY with the Secret Key shown in the app.', '',
+    'Disconnect:',
+    '  mample disconnect',
+    '    Disconnects this terminal from your phone.', '',
+    'Version:',
+    '  mample --version',
+    '    Shows the installed version.', '',
+  ].join('\n');
+}
+
 program
   .name('mample')
   .description('Mample CLI - Sends notification messages to your phone when invoked.')
-  .version('1.0.2');
+  .addHelpCommand('help [command]', 'Show this guide')
+  .configureHelp({ formatHelp })
+  .version(require('../package.json').version);
 
 // Auth komutu
 program
   .command('auth')
   .description('Connect using a mobile Secret Key or a terminal QR code')
-  .argument('[secret_key]', 'CLI Secret Key from the mobile app')
-  .option('--qr', 'Show a QR code to scan with the mobile app')
+  .argument('[secret_key]', 'CLI Secret Key from the mobile app, or qr to scan a QR code')
+  .option('--qr', 'Alias for mample auth qr')
   .action(async (secret_key, options) => {
     try {
-      if (options.qr && secret_key) throw new Error('Choose either a Secret Key or --qr.');
-      if (!secret_key) {
-        await require('../lib/pair').pairTerminal();
+      if (options.qr && secret_key && secret_key !== 'qr') throw new Error('Choose either a Secret Key or QR pairing (mample auth qr).');
+      if (!secret_key || secret_key === 'qr') {
+        const paired = await require('../lib/pair').pairTerminal();
+        if (paired === false) {
+          console.log('Pairing cancelled.');
+          return;
+        }
         console.log('✅ Success: Your computer is now connected to your Mample account!');
         return;
       }
@@ -47,7 +102,7 @@ program
     const config = getConfig();
 
     if (!config || !config.cli_secret_key) {
-      console.error("❌ Error: Connect your device using 'mample auth <secret_key>' or 'mample auth --qr'.");
+      console.error("❌ Error: Connect your device using 'mample auth <secret_key>' or 'mample auth qr'.");
       process.exit(1);
     }
 
