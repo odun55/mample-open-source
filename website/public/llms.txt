@@ -7,7 +7,7 @@ Mample is a free, open-source notification app for your terminal and AI workflow
 - Short-term request limits protect against spam.
 - Terminal QR pairing is implemented in source: a single-use 90-second invitation leads to a connection without automatic expiry. Compatible mobile, CLI and backend releases are required; source implementation does not imply public package availability.
 - The homepage has an official Google Play badge that is inactive until a real store listing is configured. A badge does not establish store publication.
-- Browser extensions and browser download notifications are in development; existing code and demos are preserved on the separate extension page.
+- Browser extensions and browser download notifications are in development. The site retains an extension preview; its source is outside this public release.
 - Notification messages are temporarily queued in Firebase. The most recent 200 history entries are stored locally on the phone.
 - Optional financial support helps development and server costs; it does not unlock features or usage privileges. The site uses a yellow Support Mample link, with no embedded payment widget.
 

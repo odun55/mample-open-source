@@ -1,13 +1,13 @@
 # Contributing to Mample
 
 Read [development setup](docs/development.md) and the [roadmap](ROADMAP.md).
-Mample 1.0 focuses on Android, CLI and Firebase delivery; browser extensions
-have a separate Mample 2.0 development scope.
+Mample 1.0 focuses on Android, CLI and Firebase delivery. Browser extension
+source is maintained separately while that product is in development.
 
 Useful contributions include reproducible bug reports, terminal/AI workflow
-improvements, accessibility fixes, Turkish and English copy, and browser
-extension research. For substantial changes, open an issue describing the
-problem and proposed behavior before building a large feature.
+improvements, accessibility fixes, and Turkish and English copy. For substantial
+changes, open an issue describing the problem and proposed behavior before
+building a large feature.
 
 1. Describe bugs with expected behavior, actual behavior, platform and version.
    Use synthetic messages and redact credentials in screenshots.

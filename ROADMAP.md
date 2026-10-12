@@ -14,7 +14,7 @@ The public repository contains current source. A feature present here may requir
 
 ## In development
 
-- Browser page element and download notifications across the extension variants.
+- Browser page element and download notifications. Extension source is maintained separately until that product is ready for its own release.
 - Better independent setup for contributors using their own Firebase project.
 - Real device and release channel validation after each product change.
 

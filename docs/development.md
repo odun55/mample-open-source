@@ -77,10 +77,11 @@ Do not deploy development changes to Mample's production project.
    CLI from `firebase` with an explicit `--project YOUR_PROJECT_ID` to deploy
    Functions and Firestore rules. The function region is `europe-west1`.
    Review billing before deploying.
-5. CLI and extension HTTPS endpoints currently name Mample's hosted project.
-   Replace that host in `cli/lib/notify.js`, `cli/lib/pair.js` and the extension
-   files you use with your own deployed URLs. Mobile callables use the mobile
-   Firebase configuration; keep their region aligned with backend deployment.
+5. CLI HTTPS endpoints currently name Mample's hosted project. Replace that
+   host in `cli/lib/notify.js` and `cli/lib/pair.js` with your own deployed URLs.
+   Browser extension source is maintained separately from this public release.
+   Mobile callables use the mobile Firebase configuration; keep their region
+   aligned with backend deployment.
    A turnkey environment switch and full emulator wiring are not implemented.
 
 Never commit service-account JSON or production signing credentials. Firebase

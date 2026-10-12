@@ -6,7 +6,7 @@ This Next.js project contains the bilingual Mample site at [mample.app](https://
 
 - `/en`, `/tr`: free Mample, focused on the mobile app and CLI.
 - `/en/guide`, `/tr/guide`: mobile pairing, terminal usage and AI coding workflows.
-- `/en/extension`, `/tr/extension`: existing browser extension implementation and planned browser integration.
+- `/en/extension`, `/tr/extension`: browser extension preview and planned integration. Extension source is maintained separately from this public release.
 - Localized privacy and terms pages reflect the free product and actual Firebase data flow.
 
 `/guide` and `/extension` redirect to their English versions. The homepage hero has an official localized black Google Play badge and an official GitHub logo lockup on a white source button. Set `NEXT_PUBLIC_GOOGLE_PLAY_URL` to the real Google Play listing URL to activate the download button; it stays inactive while the URL is empty. The former coming-soon store panel and release-email CTA have been removed.

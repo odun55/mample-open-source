@@ -26,9 +26,8 @@ The source may be ahead of the published npm package or Android release. Check t
 | [cli](cli/) | Terminal command and tests |
 | [firebase](firebase/) | Cloud Functions, Firestore rules and tests |
 | [website](website/) | English and Turkish site, Guide and policies |
-| [browser extensions](chrome-extension/) | Chrome, Edge, Firefox and Opera source in development |
 
-The Android app and CLI are the current product workflow. Browser page tracking and download notifications remain in development. The app keeps the latest 200 notifications on the phone; this history size is not a sending quota. Firebase stores anonymous IDs, delivery tokens, connection records and temporary queued messages needed for delivery. See the [privacy policy](https://mample.app/en/privacy).
+The Android app and CLI are the current product workflow. Browser page tracking and download notifications remain in development; extension source is maintained separately and is not part of this public release. The website retains an extension preview. The app keeps the latest 200 notifications on the phone; this history size is not a sending quota. Firebase stores anonymous IDs, delivery tokens, connection records and temporary queued messages needed for delivery. See the [privacy policy](https://mample.app/en/privacy).
 
 ## Develop
 
