@@ -1,7 +1,5 @@
 # Mample roadmap
 
-Updated 12 October 2026. Source completion, deployed service behavior and public package availability are tracked separately.
-
 ## Current scope
 
 - Android app, CLI and Firebase notification delivery.
@@ -10,7 +8,8 @@ Updated 12 October 2026. Source completion, deployed service behavior and public
 - English and Turkish website, usage guide and privacy information.
 - Free use with short term anti spam limits. The latest 200 notifications are stored locally.
 
-The public repository contains current source. A feature present here may require a newer mobile build, CLI package or backend deployment than the version a user has installed. Check the [website](https://mample.app) for Android public availability; an internal test release and production access application do not make it publicly downloadable.
+The public repository contains source code. Installed versions may differ from it.
+Check the [website](https://mample.app) for Android availability.
 
 ## In development
 
