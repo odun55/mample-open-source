@@ -2,11 +2,11 @@
 
 Mample sends notifications from terminal commands, builds and AI coding tasks to an Android phone. The app uses an anonymous account; pair a terminal with a QR code or Secret Key. The source is open under the [MIT license](LICENSE), and the service has no subscription or monthly notification quota. Short term rate limits protect it from spam.
 
-[Website](https://mample.app) · [Guide](https://mample.app/en/guide) · [Report an issue](https://github.com/odun55/mample-open-source/issues) · [Contribute](CONTRIBUTING.md)
+[Website](https://mample.app) · [Google Play](https://play.google.com/store/apps/details?id=com.odunco.mample) · [Guide](https://mample.app/en/guide) · [Report an issue](https://github.com/odun55/mample-open-source/issues) · [Contribute](CONTRIBUTING.md)
 
 ## Use Mample
 
-Install a compatible Android build, then install the CLI:
+Install [Mample on Google Play](https://play.google.com/store/apps/details?id=com.odunco.mample), then install the CLI:
 
 ```bash
 npm install -g mample
@@ -16,7 +16,7 @@ mample "Build finished"
 
 The app scans the QR code. You can also pair with `mample auth "your-secret-key"`; `mample auth --qr` remains an alias. Use `mample ""` for the default message. On Windows PowerShell, use `mample.cmd` if the npm PowerShell launcher is blocked. A successful CLI response confirms that the server accepted the request; phone display depends on connectivity and Android settings.
 
-The source may be ahead of the published npm package or Android release. Check the installed CLI with `mample --version` and `mample auth --help`. Android public availability is shown on the [website](https://mample.app). Source code and store publication have separate release processes.
+The source may be ahead of the published npm package or Android release. Check the installed CLI with `mample --version` and `mample auth --help`. The Android app is available through [Google Play](https://play.google.com/store/apps/details?id=com.odunco.mample). Source code and store publication have separate release processes.
 
 ## Repository
 
